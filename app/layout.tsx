@@ -69,7 +69,7 @@ export default function RootLayout({
         <link rel="icon" type="image/png" sizes="192x192" href="/icon-192.png" />
         <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
       </head>
-      <body className={`font-sans antialiased dark`}>
+      <body className={`font-sans antialiased dark`} suppressHydrationWarning>
         <QueryProvider>
           <AuthProvider>
             {children}
