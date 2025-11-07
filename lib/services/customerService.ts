@@ -80,7 +80,6 @@ export async function getAllCustomers(): Promise<Customer[]> {
     const { data, error } = await supabase
       .from('customers')
       .select('*')
-      .eq('user_id', user.id)
       .order('full_name', { ascending: true })
 
     if (error) throw error
@@ -117,7 +116,6 @@ export async function getCustomers(
     const { count, error: countError } = await supabase
       .from('customers')
       .select('*', { count: 'exact', head: true })
-      .eq('user_id', user.id)
 
     if (countError) throw countError
 
@@ -130,7 +128,6 @@ export async function getCustomers(
     const { data, error } = await supabase
       .from('customers')
       .select('*')
-      .eq('user_id', user.id)
       .order('created_at', { ascending: false })
       .range(from, to)
 
@@ -180,7 +177,6 @@ export async function searchCustomers(
     const { count, error: countError } = await supabase
       .from('customers')
       .select('*', { count: 'exact', head: true })
-      .eq('user_id', user.id)
       .or(`full_name.ilike.${searchQuery},whatsapp.ilike.${searchQuery}`)
 
     if (countError) throw countError
@@ -194,7 +190,6 @@ export async function searchCustomers(
     const { data, error } = await supabase
       .from('customers')
       .select('*')
-      .eq('user_id', user.id)
       .or(`full_name.ilike.${searchQuery},whatsapp.ilike.${searchQuery}`)
       .order('created_at', { ascending: false })
       .range(from, to)
@@ -237,7 +232,6 @@ export async function getCustomerById(id: string): Promise<Customer> {
       .from('customers')
       .select('*')
       .eq('id', id)
-      .eq('user_id', user.id)
       .single()
 
     if (error) {
@@ -288,7 +282,6 @@ export async function updateCustomer(
       .from('customers')
       .update(updateData)
       .eq('id', id)
-      .eq('user_id', user.id)
       .select()
       .single()
 
@@ -328,7 +321,6 @@ export async function deleteCustomer(id: string): Promise<void> {
       .from('customers')
       .delete()
       .eq('id', id)
-      .eq('user_id', user.id)
 
     if (error) throw error
   } catch (error) {

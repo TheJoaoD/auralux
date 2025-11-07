@@ -215,7 +215,6 @@ export async function getAllProducts(): Promise<Product[]> {
         category:categories(id, name, description, color)
       `
       )
-      .eq('user_id', user.id)
       .order('name', { ascending: true })
 
     if (error) throw error
@@ -263,7 +262,6 @@ export async function getProducts(
     const { count, error: countError } = await supabase
       .from('products')
       .select('*', { count: 'exact', head: true })
-      .eq('user_id', user.id)
 
     if (countError) throw countError
 
@@ -281,7 +279,6 @@ export async function getProducts(
         category:categories(id, name, description, color)
       `
       )
-      .eq('user_id', user.id)
       .order('created_at', { ascending: false })
       .range(from, to)
 
@@ -339,7 +336,6 @@ export async function getProductById(id: string): Promise<Product> {
       `
       )
       .eq('id', id)
-      .eq('user_id', user.id)
       .single()
 
     if (error) {
@@ -415,7 +411,6 @@ export async function updateProduct(
       .from('products')
       .update(updateData)
       .eq('id', id)
-      .eq('user_id', user.id)
       .select(
         `
         *,
@@ -468,7 +463,6 @@ export async function deleteProduct(id: string): Promise<void> {
       .from('products')
       .delete()
       .eq('id', id)
-      .eq('user_id', user.id)
 
     if (error) throw error
   } catch (error) {

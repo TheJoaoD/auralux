@@ -52,7 +52,6 @@ export async function validateStock(
         .from('products')
         .select('id, name, quantity')
         .eq('id', item.product.id)
-        .eq('user_id', user.id)
         .single()
 
       if (error || !product) {
@@ -104,7 +103,6 @@ export async function checkLowStock(productId: string): Promise<boolean> {
       .from('products')
       .select('quantity, low_stock_threshold')
       .eq('id', productId)
-      .eq('user_id', user.id)
       .single()
 
     if (error || !product) {
@@ -148,7 +146,6 @@ export async function getMovements(
         )
       `
       )
-      .eq('user_id', user.id)
       .order('created_at', { ascending: false })
 
     // Filter by product
@@ -205,7 +202,6 @@ export async function getMovementsByReference(
         )
       `
       )
-      .eq('user_id', user.id)
       .eq('reference_id', referenceId)
       .order('created_at', { ascending: false })
 
@@ -239,7 +235,6 @@ export async function getLowStockProducts() {
     const { data: products, error } = await supabase
       .from('products')
       .select('*')
-      .eq('user_id', user.id)
       .or('quantity.lte.low_stock_threshold,low_stock_threshold.is.null')
       .order('quantity', { ascending: true })
 

@@ -81,7 +81,6 @@ export async function getSales(filters?: SalesFilters): Promise<Sale[]> {
           email
         )
       `)
-      .eq('user_id', user.id)
       .order('created_at', { ascending: false })
 
     // Apply filters
@@ -142,7 +141,6 @@ export async function getSalesMetrics(dateRange: DateRange): Promise<SalesMetric
     const { data: sales, error } = await supabase
       .from('sales')
       .select('*')
-      .eq('user_id', user.id)
       .eq('status', 'completed')
       .gte('created_at', dateRange.startDate.toISOString())
       .lte('created_at', dateRange.endDate.toISOString())
@@ -206,7 +204,6 @@ export async function getPaymentMethodBreakdown(
     const { data: sales, error } = await supabase
       .from('sales')
       .select('payment_method, total_amount')
-      .eq('user_id', user.id)
       .eq('status', 'completed')
       .gte('created_at', dateRange.startDate.toISOString())
       .lte('created_at', dateRange.endDate.toISOString())
@@ -278,7 +275,6 @@ export async function getRecentSales(limit: number = 10): Promise<Sale[]> {
           unit_price
         )
       `)
-      .eq('user_id', user.id)
       .order('created_at', { ascending: false })
       .limit(limit)
 
@@ -318,7 +314,6 @@ export async function getSalesChartData(dateRange: DateRange): Promise<ChartData
     const { data: sales, error } = await supabase
       .from('sales')
       .select('created_at, total_amount')
-      .eq('user_id', user.id)
       .eq('status', 'completed')
       .gte('created_at', dateRange.startDate.toISOString())
       .lte('created_at', dateRange.endDate.toISOString())

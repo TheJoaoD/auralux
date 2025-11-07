@@ -30,7 +30,6 @@ export async function getCategories(): Promise<Category[]> {
     const { data, error } = await supabase
       .from('categories')
       .select('*')
-      .eq('user_id', user.id)
       .order('name', { ascending: true })
 
     if (error) throw error
@@ -63,7 +62,6 @@ export async function getCategoryById(id: string): Promise<Category> {
       .from('categories')
       .select('*')
       .eq('id', id)
-      .eq('user_id', user.id)
       .single()
 
     if (error) {
@@ -171,7 +169,6 @@ export async function updateCategory(
         description: description || null,
       })
       .eq('id', id)
-      .eq('user_id', user.id)
       .select()
       .single()
 
@@ -233,7 +230,6 @@ export async function getCategoriesWithCount(
     const { count, error: countError } = await supabase
       .from('categories')
       .select('*', { count: 'exact', head: true })
-      .eq('user_id', user.id)
 
     if (countError) throw countError
 
@@ -246,7 +242,6 @@ export async function getCategoriesWithCount(
     const { data: categories, error } = await supabase
       .from('categories')
       .select('*')
-      .eq('user_id', user.id)
       .order('name', { ascending: true })
       .range(from, to)
 
@@ -315,7 +310,6 @@ export async function deleteCategory(id: string): Promise<{ affectedProducts: nu
       .from('categories')
       .delete()
       .eq('id', id)
-      .eq('user_id', user.id)
 
     if (error) throw error
 
