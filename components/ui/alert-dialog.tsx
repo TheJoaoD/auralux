@@ -64,8 +64,8 @@ function AlertDialogContent({
           'sm:bottom-auto sm:left-[50%] sm:right-auto sm:top-[50%] sm:max-w-lg sm:translate-x-[-50%] sm:translate-y-[-50%] sm:rounded-lg sm:border',
           'sm:data-[state=closed]:slide-out-to-bottom-0 sm:data-[state=open]:slide-in-from-bottom-0',
           'sm:data-[state=closed]:zoom-out-95 sm:data-[state=open]:zoom-in-95',
-          // Max height for mobile
-          'max-h-[85vh] overflow-y-auto',
+          // Max height for mobile - usando dvh (dynamic viewport height) para considerar teclado
+          'max-h-[85dvh] overflow-y-auto',
           className,
         )}
         {...props}

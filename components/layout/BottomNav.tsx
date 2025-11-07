@@ -26,7 +26,7 @@ export function BottomNav() {
   const pathname = usePathname()
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 z-50 bg-[#A1887F] border-t border-[#E0DCD1]/20 safe-area-inset-bottom">
+    <nav className="fixed bottom-0 left-0 right-0 z-50 bg-[#A1887F] border-t border-[#E0DCD1]/20" style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}>
       <div className="flex justify-around items-center h-16 px-2">
         {navigation.map((item) => {
           const isActive = pathname.startsWith(item.href)

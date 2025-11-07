@@ -7,7 +7,7 @@ import { APP_MAIN_LOGO_URL } from '@/lib/constants/branding'
 
 export function TopBar() {
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 bg-[#A1887F] border-b border-[#E0DCD1]/20 safe-area-inset-top">
+    <header className="fixed top-0 left-0 right-0 z-50 bg-[#A1887F] border-b border-[#E0DCD1]/20" style={{ paddingTop: 'env(safe-area-inset-top)' }}>
       <div className="flex items-center justify-between h-16 px-4">
         {/* Logo */}
         <div className="flex items-center">
