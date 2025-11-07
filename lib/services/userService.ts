@@ -16,38 +16,23 @@ export interface CreateUserInput {
  * @returns Created user data
  */
 export async function createUser(input: CreateUserInput) {
-  const supabase = createClient()
-
   try {
-    const {
-      data: { user: currentUser },
-    } = await supabase.auth.getUser()
-
-    if (!currentUser) {
-      throw new Error('Usuário não autenticado')
-    }
-
-    // Create user using Supabase Auth
-    const { data, error } = await supabase.auth.signUp({
-      email: input.email,
-      password: input.password,
-      options: {
-        emailRedirectTo: `${window.location.origin}/login`,
+    // Call server endpoint to create user with admin API (bypasses email confirmation)
+    const response = await fetch('/api/users/create', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
       },
+      body: JSON.stringify(input),
     })
 
-    if (error) {
-      if (error.message.includes('already registered')) {
-        throw new Error('Este email já está cadastrado')
-      }
-      throw error
+    if (!response.ok) {
+      const error = await response.json()
+      throw new Error(error.error || 'Erro ao criar usuário')
     }
 
-    if (!data.user) {
-      throw new Error('Erro ao criar usuário')
-    }
-
-    return data.user
+    const user = await response.json()
+    return user
   } catch (error) {
     console.error('Error creating user:', error)
     if (error instanceof Error) {
