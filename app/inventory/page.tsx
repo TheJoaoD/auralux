@@ -52,28 +52,34 @@ export default function InventoryPage() {
 
         {/* Metrics Cards */}
         {products && products.length > 0 && (
-          <InventoryMetrics products={products} />
+          <div className="mb-6">
+            <InventoryMetrics products={products} />
+          </div>
         )}
 
         {/* Product Gallery */}
-        <ProductGallery
-          products={products}
-          isLoading={isLoading}
-          error={error as Error | null}
-          onProductClick={handleProductClick}
-          onAddProduct={() => setIsAddModalOpen(true)}
-        />
+        <div className="mb-6">
+          <ProductGallery
+            products={products}
+            isLoading={isLoading}
+            error={error as Error | null}
+            onProductClick={handleProductClick}
+            onAddProduct={() => setIsAddModalOpen(true)}
+          />
+        </div>
 
         {/* Pagination */}
         {paginatedProducts && paginatedProducts.totalPages > 1 && (
-          <SimplePagination
-            currentPage={paginatedProducts.page}
-            totalPages={paginatedProducts.totalPages}
-            onPageChange={setCurrentPage}
-            hasNextPage={paginatedProducts.hasNextPage}
-            hasPreviousPage={paginatedProducts.hasPreviousPage}
-            totalItems={paginatedProducts.total}
-          />
+          <div className="mb-6">
+            <SimplePagination
+              currentPage={paginatedProducts.page}
+              totalPages={paginatedProducts.totalPages}
+              onPageChange={setCurrentPage}
+              hasNextPage={paginatedProducts.hasNextPage}
+              hasPreviousPage={paginatedProducts.hasPreviousPage}
+              totalItems={paginatedProducts.total}
+            />
+          </div>
         )}
 
         {/* Add Product Modal */}

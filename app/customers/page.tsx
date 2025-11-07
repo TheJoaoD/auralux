@@ -116,7 +116,7 @@ export default function CustomersPage() {
 
         {/* Search Bar */}
         {totalCustomers > 0 && (
-          <div className="relative">
+          <div className="relative mb-6">
             <div className="relative">
               <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-[#A1887F]" />
               <input
@@ -140,24 +140,28 @@ export default function CustomersPage() {
         )}
 
         {/* Customer Gallery */}
-        <CustomerGallery
-          searchQuery={debouncedSearchQuery}
-          currentPage={currentPage}
-          pageSize={pageSize}
-          onCustomerClick={handleCustomerClick}
-          onAddCustomer={() => setIsAddModalOpen(true)}
-        />
+        <div className="mb-6">
+          <CustomerGallery
+            searchQuery={debouncedSearchQuery}
+            currentPage={currentPage}
+            pageSize={pageSize}
+            onCustomerClick={handleCustomerClick}
+            onAddCustomer={() => setIsAddModalOpen(true)}
+          />
+        </div>
 
         {/* Pagination */}
         {paginatedCustomers && paginatedCustomers.totalPages > 1 && (
-          <SimplePagination
-            currentPage={paginatedCustomers.page}
-            totalPages={paginatedCustomers.totalPages}
-            onPageChange={setCurrentPage}
-            hasNextPage={paginatedCustomers.hasNextPage}
-            hasPreviousPage={paginatedCustomers.hasPreviousPage}
-            totalItems={paginatedCustomers.total}
-          />
+          <div className="mb-6">
+            <SimplePagination
+              currentPage={paginatedCustomers.page}
+              totalPages={paginatedCustomers.totalPages}
+              onPageChange={setCurrentPage}
+              hasNextPage={paginatedCustomers.hasNextPage}
+              hasPreviousPage={paginatedCustomers.hasPreviousPage}
+              totalItems={paginatedCustomers.total}
+            />
+          </div>
         )}
 
         {/* Add Customer Modal */}

@@ -199,13 +199,17 @@ export default function DashboardPage() {
         </div>
 
         {/* Date Range Filter */}
-        <DateRangeFilter selectedPeriod={selectedPeriod} onPeriodChange={setSelectedPeriod} />
+        <div className="mb-6">
+          <DateRangeFilter selectedPeriod={selectedPeriod} onPeriodChange={setSelectedPeriod} />
+        </div>
 
         {/* Metrics Cards */}
-        <MetricsCards metrics={metrics} isLoading={metricsLoading} />
+        <div className="mb-6">
+          <MetricsCards metrics={metrics} isLoading={metricsLoading} />
+        </div>
 
         {/* Charts Section */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
           {/* Sales Chart (2/3 width on desktop) */}
           <div className="lg:col-span-2">
             <SalesChart data={chartData} isLoading={chartLoading} />
@@ -218,7 +222,9 @@ export default function DashboardPage() {
         </div>
 
         {/* Recent Sales List */}
-        <RecentSalesList sales={recentSales} isLoading={salesLoading} onAddSale={handleAddSale} />
+        <div className="mb-6">
+          <RecentSalesList sales={recentSales} isLoading={salesLoading} onAddSale={handleAddSale} />
+        </div>
       </div>
 
       {/* Floating Action Button (Mobile Only) - Above BottomNav */}
