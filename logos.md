@@ -1,0 +1,2 @@
+main_logo=https://pxopccvykwdzjqjodmob.supabase.co/storage/v1/object/public/auralux_images/logo_auralux_new.png
+purple_logo=https://pxopccvykwdzjqjodmob.supabase.co/storage/v1/object/public/auralux_images/lgo_purple.png
