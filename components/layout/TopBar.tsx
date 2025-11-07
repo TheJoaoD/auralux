@@ -14,9 +14,9 @@ export function TopBar() {
           <Image
             src={APP_MAIN_LOGO_URL}
             alt="Auralux"
-            width={120}
-            height={40}
-            className="h-10 w-auto"
+            width={140}
+            height={48}
+            className="h-12 w-auto"
             priority
           />
         </div>
