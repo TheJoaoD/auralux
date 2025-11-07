@@ -29,9 +29,9 @@ export default function InventoryHistoryPage() {
 
   return (
     <MainLayout>
-      <div className="container max-w-7xl mx-auto px-4 py-6 space-y-6">
+      <div className="container max-w-7xl mx-auto px-4 pb-8">
         {/* Header */}
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-4 pt-4 pb-6">
           <Link
             href="/inventory"
             className="p-2 hover:bg-[#A1887F]/20 rounded-lg transition-colors"

@@ -1,4 +1,5 @@
 import { createClient } from '@/lib/supabase/server'
+import { createClient as createServiceClient } from '@supabase/supabase-js'
 import { NextResponse } from 'next/server'
 
 export async function DELETE(
@@ -26,8 +27,20 @@ export async function DELETE(
       )
     }
 
+    // Create admin client with service role key
+    const adminSupabase = createServiceClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.SUPABASE_SERVICE_ROLE_KEY!,
+      {
+        auth: {
+          autoRefreshToken: false,
+          persistSession: false
+        }
+      }
+    )
+
     // Delete user using admin API
-    const { error } = await supabase.auth.admin.deleteUser(id)
+    const { error } = await adminSupabase.auth.admin.deleteUser(id)
 
     if (error) {
       console.error('Error deleting user:', error)

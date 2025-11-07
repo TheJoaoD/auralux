@@ -171,9 +171,9 @@ export default function DashboardPage() {
 
   return (
     <MainLayout>
-      <div className="container max-w-7xl mx-auto px-4 py-6 space-y-6">
+      <div className="container max-w-7xl mx-auto px-4 pb-8">
         {/* Header Section */}
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pt-4 pb-6">
           <h1 className="text-2xl font-bold text-[#E0DCD1]">Dashboard de Vendas</h1>
 
           <div className="flex items-center gap-3">

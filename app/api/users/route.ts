@@ -1,4 +1,5 @@
 import { createClient } from '@/lib/supabase/server'
+import { createClient as createServiceClient } from '@supabase/supabase-js'
 import { NextResponse } from 'next/server'
 
 export async function GET() {
@@ -14,9 +15,20 @@ export async function GET() {
       return NextResponse.json({ error: 'Não autenticado' }, { status: 401 })
     }
 
-    // Query auth.users via a database function or view
-    // For now, we'll use the admin listUsers if available
-    const { data, error } = await supabase.auth.admin.listUsers()
+    // Create admin client with service role key
+    const adminSupabase = createServiceClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.SUPABASE_SERVICE_ROLE_KEY!,
+      {
+        auth: {
+          autoRefreshToken: false,
+          persistSession: false
+        }
+      }
+    )
+
+    // Query auth.users via admin API
+    const { data, error } = await adminSupabase.auth.admin.listUsers()
 
     if (error) {
       console.error('Error listing users:', error)

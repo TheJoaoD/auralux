@@ -64,14 +64,14 @@ export default function SettingsPage() {
 
   return (
     <MainLayout>
-      <div className="container max-w-2xl mx-auto px-4 py-6 space-y-6">
+      <div className="container max-w-2xl mx-auto px-4 pb-8">
         {/* Page Title */}
-        <h1 className="text-2xl font-bold text-[#E0DCD1]">
+        <h1 className="text-2xl font-bold text-[#E0DCD1] pt-4 pb-6">
           Configurações
         </h1>
 
         {/* User Information Card */}
-        <div className="bg-[#A1887F] rounded-2xl p-6">
+        <div className="bg-[#A1887F] rounded-2xl p-6 mb-6">
           <div className="flex items-center gap-4">
             <div className="flex items-center justify-center w-16 h-16 rounded-full bg-[#C49A9A]">
               <User className="h-8 w-8 text-[#202020]" />
@@ -89,7 +89,7 @@ export default function SettingsPage() {
 
         {/* User Management Link */}
         <Link href="/settings/users">
-          <div className="bg-[#A1887F] rounded-2xl p-6 hover:bg-[#8D7A6F] transition-colors cursor-pointer">
+          <div className="bg-[#A1887F] rounded-2xl p-6 hover:bg-[#8D7A6F] transition-colors cursor-pointer mb-6">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-4">
                 <div className="flex items-center justify-center w-12 h-12 rounded-full bg-[#C49A9A]">
@@ -110,7 +110,7 @@ export default function SettingsPage() {
         </Link>
 
         {/* Categories Management Section */}
-        <div className="bg-[#A1887F] rounded-2xl p-6">
+        <div className="bg-[#A1887F] rounded-2xl p-6 mb-6">
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-3">
               <Tag className="h-6 w-6 text-[#C49A9A]" />
@@ -154,7 +154,7 @@ export default function SettingsPage() {
         </div>
 
         {/* System Information */}
-        <div className="bg-[#A1887F] rounded-2xl p-6">
+        <div className="bg-[#A1887F] rounded-2xl p-6 mb-6">
           <h3 className="text-lg font-semibold text-[#E0DCD1] mb-3">
             Sobre o Sistema
           </h3>

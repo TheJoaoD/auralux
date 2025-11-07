@@ -78,9 +78,9 @@ export default function CustomersPage() {
 
   return (
     <MainLayout>
-      <div className="container max-w-6xl mx-auto px-4 py-6 space-y-6">
+      <div className="container max-w-6xl mx-auto px-4 pb-8">
         {/* Header Section */}
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pt-4 pb-6">
           <h1 className="text-2xl font-bold text-[#E0DCD1]">
             Clientes
           </h1>
@@ -97,7 +97,7 @@ export default function CustomersPage() {
 
         {/* Metrics Card */}
         {totalCustomers > 0 && (
-          <div className="bg-[#A1887F] rounded-xl p-5 shadow-sm">
+          <div className="bg-[#A1887F] rounded-xl p-5 shadow-sm mb-6">
             <div className="flex items-center gap-4">
               <div className="w-12 h-12 rounded-full bg-[#C49A9A] flex items-center justify-center flex-shrink-0">
                 <Users className="h-6 w-6 text-[#202020]" />

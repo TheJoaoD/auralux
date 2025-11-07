@@ -57,9 +57,9 @@ export default function UsersPage() {
 
   return (
     <MainLayout>
-      <div className="container max-w-4xl mx-auto px-4 py-6 space-y-6">
+      <div className="container max-w-4xl mx-auto px-4 pb-8">
         {/* Header */}
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-4 pt-4 pb-4">
           <button
             onClick={() => router.push('/settings')}
             className="p-2 hover:bg-[#A1887F]/20 rounded-lg transition-colors"
@@ -70,7 +70,7 @@ export default function UsersPage() {
         </div>
 
         {/* Add User Button */}
-        <div className="flex justify-end">
+        <div className="flex justify-end mb-6">
           <button
             onClick={() => setIsAddModalOpen(true)}
             className="bg-[#C49A9A] hover:bg-[#B38989] text-[#202020] font-semibold py-3 px-6 rounded-lg transition-colors flex items-center gap-2 min-h-[44px]"
@@ -81,7 +81,7 @@ export default function UsersPage() {
         </div>
 
         {/* Users List */}
-        <div className="bg-[#A1887F] rounded-xl p-6">
+        <div className="bg-[#A1887F] rounded-xl p-6 mb-6">
           {isLoading && (
             <div className="space-y-3">
               {[1, 2, 3].map((i) => (
