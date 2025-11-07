@@ -54,14 +54,45 @@ function DialogContent({
 }: React.ComponentProps<typeof DialogPrimitive.Content> & {
   showCloseButton?: boolean
 }) {
+  const [keyboardOpen, setKeyboardOpen] = React.useState(false)
+  const contentRef = React.useRef<HTMLDivElement>(null)
+
+  React.useEffect(() => {
+    // Detect keyboard by monitoring viewport resize on mobile
+    const handleResize = () => {
+      if (typeof window === 'undefined' || window.innerWidth > 640) return
+
+      // If visualViewport is significantly smaller than window, keyboard is open
+      const visualViewport = window.visualViewport
+      if (visualViewport) {
+        const keyboardHeight = window.innerHeight - visualViewport.height
+        setKeyboardOpen(keyboardHeight > 100) // Threshold of 100px
+      }
+    }
+
+    // Listen to visualViewport changes (more accurate for keyboard detection)
+    if (window.visualViewport) {
+      window.visualViewport.addEventListener('resize', handleResize)
+      window.visualViewport.addEventListener('scroll', handleResize)
+    }
+
+    return () => {
+      if (window.visualViewport) {
+        window.visualViewport.removeEventListener('resize', handleResize)
+        window.visualViewport.removeEventListener('scroll', handleResize)
+      }
+    }
+  }, [])
+
   return (
     <DialogPortal data-slot="dialog-portal">
       <DialogOverlay />
       <DialogPrimitive.Content
+        ref={contentRef}
         data-slot="dialog-content"
         className={cn(
           // Mobile-first: bottom sheet that slides up
-          'fixed bottom-0 left-0 right-0 z-50 w-full rounded-t-2xl border-t bg-background p-6 shadow-lg',
+          'fixed left-0 right-0 z-50 w-full rounded-t-2xl border-t bg-background p-6 shadow-lg',
           'data-[state=open]:animate-in data-[state=closed]:animate-out',
           'data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0',
           'data-[state=closed]:slide-out-to-bottom data-[state=open]:slide-in-from-bottom',
@@ -70,10 +101,18 @@ function DialogContent({
           'sm:bottom-auto sm:left-[50%] sm:right-auto sm:top-[50%] sm:max-w-lg sm:translate-x-[-50%] sm:translate-y-[-50%] sm:rounded-lg sm:border',
           'sm:data-[state=closed]:slide-out-to-bottom-0 sm:data-[state=open]:slide-in-from-bottom-0',
           'sm:data-[state=closed]:zoom-out-95 sm:data-[state=open]:zoom-in-95',
-          // Max height for mobile - usando dvh (dynamic viewport height) para considerar teclado
-          'max-h-[85dvh] overflow-y-auto',
+          // Adjust position and height based on keyboard state
+          keyboardOpen
+            ? 'bottom-[var(--keyboard-offset,0px)] max-h-[45dvh]'
+            : 'bottom-0 max-h-[85dvh]',
+          'overflow-y-auto',
           className,
         )}
+        style={{
+          '--keyboard-offset': keyboardOpen && window.visualViewport
+            ? `${window.innerHeight - window.visualViewport.height}px`
+            : '0px',
+        } as React.CSSProperties}
         {...props}
       >
         {children}

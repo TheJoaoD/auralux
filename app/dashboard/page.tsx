@@ -155,13 +155,15 @@ export default function DashboardPage() {
         </div>
 
         {/* Floating Action Button (Mobile Only) */}
-        <button
-          onClick={handleAddSale}
-          className="fixed bottom-6 right-6 sm:hidden bg-[#C49A9A] hover:bg-[#B38989] text-white p-4 rounded-full shadow-lg transition-all hover:scale-110 active:scale-95 z-50"
-          aria-label="Nova Venda"
-        >
-          <Plus className="h-6 w-6" />
-        </button>
+        {!isNewSaleOpen && (
+          <button
+            onClick={handleAddSale}
+            className="fixed bottom-24 right-6 sm:hidden bg-[#C49A9A] hover:bg-[#B38989] text-white p-4 rounded-full shadow-lg transition-all hover:scale-110 active:scale-95 z-[60]"
+            aria-label="Nova Venda"
+          >
+            <Plus className="h-6 w-6" />
+          </button>
+        )}
 
         {/* New Sale Wizard */}
         <NewSaleWizard open={isNewSaleOpen} onOpenChange={setIsNewSaleOpen} />
@@ -228,13 +230,15 @@ export default function DashboardPage() {
       </div>
 
       {/* Floating Action Button (Mobile Only) - Above BottomNav */}
-      <button
-        onClick={handleAddSale}
-        className="fixed bottom-20 right-6 sm:hidden bg-[#C49A9A] hover:bg-[#B38989] text-white p-4 rounded-full shadow-lg transition-all hover:scale-110 active:scale-95 z-[60]"
-        aria-label="Nova Venda"
-      >
-        <Plus className="h-6 w-6" />
-      </button>
+      {!isNewSaleOpen && (
+        <button
+          onClick={handleAddSale}
+          className="fixed bottom-24 right-6 sm:hidden bg-[#C49A9A] hover:bg-[#B38989] text-white p-4 rounded-full shadow-lg transition-all hover:scale-110 active:scale-95 z-[60]"
+          aria-label="Nova Venda"
+        >
+          <Plus className="h-6 w-6" />
+        </button>
+      )}
 
       {/* New Sale Wizard */}
       <NewSaleWizard open={isNewSaleOpen} onOpenChange={setIsNewSaleOpen} />
