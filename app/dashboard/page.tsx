@@ -168,16 +168,16 @@ export default function DashboardPage() {
               />
             )}
 
-            <div className="fixed bottom-20 sm:hidden z-[60]" style={{ left: '95%', transform: 'translateX(-50%)' }}>
+            <div className="fixed bottom-20 sm:hidden z-[60]" style={{ left: '95%', transform: 'translateX(-100%)' }}>
               {/* Action Buttons */}
-              <div className="flex flex-col items-start gap-3 mb-3">
+              <div className="flex flex-col items-end gap-3 mb-3">
               {/* View Sales Button */}
               <a
                 href="/sales"
                 className={`flex items-center gap-3 bg-[#A1887F] text-[#E0DCD1] px-4 py-3 rounded-full shadow-lg transition-all ${
                   isFabOpen
                     ? 'opacity-100 translate-x-0'
-                    : 'opacity-0 -translate-x-20 pointer-events-none'
+                    : 'opacity-0 translate-x-20 pointer-events-none'
                 }`}
                 style={{
                   transitionDuration: '300ms',
@@ -199,7 +199,7 @@ export default function DashboardPage() {
                 className={`flex items-center gap-3 bg-[#A1887F] text-[#E0DCD1] px-4 py-3 rounded-full shadow-lg transition-all ${
                   isFabOpen
                     ? 'opacity-100 translate-x-0'
-                    : 'opacity-0 -translate-x-20 pointer-events-none'
+                    : 'opacity-0 translate-x-20 pointer-events-none'
                 }`}
                 style={{
                   transitionDuration: '300ms',
@@ -313,16 +313,16 @@ export default function DashboardPage() {
             />
           )}
 
-          <div className="fixed bottom-20 sm:hidden z-[60]" style={{ left: '95%', transform: 'translateX(-50%)' }}>
+          <div className="fixed bottom-20 sm:hidden z-[60]" style={{ left: '95%', transform: 'translateX(-100%)' }}>
             {/* Action Buttons */}
-            <div className="flex flex-col items-start gap-3 mb-3">
+            <div className="flex flex-col items-end gap-3 mb-3">
             {/* View Sales Button */}
             <a
               href="/sales"
               className={`flex items-center gap-3 bg-[#A1887F] text-[#E0DCD1] px-4 py-3 rounded-full shadow-lg transition-all ${
                 isFabOpen
                   ? 'opacity-100 translate-x-0'
-                  : 'opacity-0 -translate-x-20 pointer-events-none'
+                  : 'opacity-0 translate-x-20 pointer-events-none'
               }`}
               style={{
                 transitionDuration: '300ms',
@@ -344,7 +344,7 @@ export default function DashboardPage() {
               className={`flex items-center gap-3 bg-[#A1887F] text-[#E0DCD1] px-4 py-3 rounded-full shadow-lg transition-all ${
                 isFabOpen
                   ? 'opacity-100 translate-x-0'
-                  : 'opacity-0 -translate-x-20 pointer-events-none'
+                  : 'opacity-0 translate-x-20 pointer-events-none'
               }`}
               style={{
                 transitionDuration: '300ms',
