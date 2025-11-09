@@ -159,17 +159,18 @@ export default function DashboardPage() {
 
         {/* Floating Action Button with Menu (Mobile Only) */}
         {!isNewSaleOpen && (
-          <div className="fixed bottom-20 sm:hidden z-[60]" style={{ left: '90%', transform: 'translateX(-50%)' }}>
+          <>
             {/* Backdrop */}
             {isFabOpen && (
               <div
-                className="fixed inset-0 bg-black/20 -z-10"
+                className="fixed inset-0 bg-black/20 sm:hidden z-[59]"
                 onClick={() => setIsFabOpen(false)}
               />
             )}
 
-            {/* Action Buttons */}
-            <div className="flex flex-col items-end gap-3 mb-3">
+            <div className="fixed bottom-20 sm:hidden z-[60]" style={{ right: '1.5rem' }}>
+              {/* Action Buttons */}
+              <div className="flex flex-col items-end gap-3 mb-3">
               {/* View Sales Button */}
               <a
                 href="/sales"
@@ -222,7 +223,8 @@ export default function DashboardPage() {
             >
               <Plus className="h-6 w-6" />
             </button>
-          </div>
+            </div>
+          </>
         )}
 
         {/* New Sale Wizard */}
@@ -302,17 +304,18 @@ export default function DashboardPage() {
 
       {/* Floating Action Button with Menu (Mobile Only) - Above BottomNav */}
       {!isNewSaleOpen && (
-        <div className="fixed bottom-20 sm:hidden z-[60]" style={{ left: '90%', transform: 'translateX(-50%)' }}>
+        <>
           {/* Backdrop */}
           {isFabOpen && (
             <div
-              className="fixed inset-0 bg-black/20 -z-10"
+              className="fixed inset-0 bg-black/20 sm:hidden z-[59]"
               onClick={() => setIsFabOpen(false)}
             />
           )}
 
-          {/* Action Buttons */}
-          <div className="flex flex-col items-end gap-3 mb-3">
+          <div className="fixed bottom-20 sm:hidden z-[60]" style={{ right: '1.5rem' }}>
+            {/* Action Buttons */}
+            <div className="flex flex-col items-end gap-3 mb-3">
             {/* View Sales Button */}
             <a
               href="/sales"
@@ -365,7 +368,8 @@ export default function DashboardPage() {
           >
             <Plus className="h-6 w-6" />
           </button>
-        </div>
+          </div>
+        </>
       )}
 
       {/* New Sale Wizard */}
