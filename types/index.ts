@@ -53,3 +53,17 @@ export type CategoryUpdate = Database['public']['Tables']['categories']['Update'
 export type User = Database['public']['Tables']['users']['Row']
 export type UserInsert = Database['public']['Tables']['users']['Insert']
 export type UserUpdate = Database['public']['Tables']['users']['Update']
+
+// Discount types from database
+export type Discount = Database['public']['Tables']['discounts']['Row']
+export type DiscountInsert = Database['public']['Tables']['discounts']['Insert']
+export type DiscountUpdate = Database['public']['Tables']['discounts']['Update']
+
+export interface DiscountInput {
+  name: string
+  description?: string
+  discount_type: 'percentage' | 'fixed'
+  discount_value: number
+  minimum_purchase?: number
+  is_active?: boolean
+}

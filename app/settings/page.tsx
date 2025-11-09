@@ -12,7 +12,7 @@ import { EditCategoryModal } from '@/components/categories/EditCategoryModal'
 import { DeleteCategoryDialog } from '@/components/categories/DeleteCategoryDialog'
 import { SimplePagination } from '@/components/ui/simple-pagination'
 import { getCategoriesWithCount, type CategoryWithCount } from '@/lib/services/categoryService'
-import { LogOut, Loader2, User, Tag, Plus, Users, ChevronRight } from 'lucide-react'
+import { LogOut, Loader2, User, Tag, Plus, Users, ChevronRight, Percent } from 'lucide-react'
 import { toast } from 'sonner'
 import Link from 'next/link'
 
@@ -101,6 +101,28 @@ export default function SettingsPage() {
                   </h3>
                   <p className="text-sm text-[#E0DCD1]/70">
                     Adicionar ou remover usuários do sistema
+                  </p>
+                </div>
+              </div>
+              <ChevronRight className="h-6 w-6 text-[#E0DCD1]" />
+            </div>
+          </div>
+        </Link>
+
+        {/* Discounts Management Link */}
+        <Link href="/settings/discounts">
+          <div className="bg-[#A1887F] rounded-2xl p-6 hover:bg-[#8D7A6F] transition-colors cursor-pointer mb-6">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-4">
+                <div className="flex items-center justify-center w-12 h-12 rounded-full bg-[#C49A9A]">
+                  <Percent className="h-6 w-6 text-[#202020]" />
+                </div>
+                <div>
+                  <h3 className="text-lg font-semibold text-[#E0DCD1]">
+                    Gerenciar Descontos
+                  </h3>
+                  <p className="text-sm text-[#E0DCD1]/70">
+                    Criar descontos percentuais ou com valor fixo
                   </p>
                 </div>
               </div>
