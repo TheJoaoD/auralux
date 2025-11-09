@@ -463,3 +463,158 @@ export async function createSale(input: CreateSaleInput): Promise<Sale> {
     throw new Error('Erro ao criar venda. Tente novamente')
   }
 }
+
+/**
+ * Gets a single sale by ID with all details
+ */
+export async function getSaleById(id: string): Promise<Sale> {
+  const supabase = createClient()
+
+  try {
+    const {
+      data: { user },
+    } = await supabase.auth.getUser()
+
+    if (!user) {
+      throw new Error('Usuário não autenticado')
+    }
+
+    const { data, error } = await supabase
+      .from('sales')
+      .select(`
+        *,
+        customer:customers!sales_customer_id_fkey (
+          id,
+          full_name,
+          email
+        ),
+        sale_items (
+          id,
+          product_id,
+          product_name,
+          quantity,
+          unit_price,
+          unit_cost
+        )
+      `)
+      .eq('id', id)
+      .single()
+
+    if (error) {
+      if (error.code === 'PGRST116') {
+        throw new Error('Venda não encontrada')
+      }
+      throw error
+    }
+
+    return {
+      ...data,
+      discount_amount:
+        data.payment_method === 'installment'
+          ? data.total_amount - (data.actual_amount_received || 0)
+          : 0,
+    }
+  } catch (error) {
+    console.error('Error fetching sale:', error)
+    if (error instanceof Error) {
+      throw error
+    }
+    throw new Error('Erro ao carregar venda. Tente novamente')
+  }
+}
+
+/**
+ * Deletes a sale and returns stock to inventory
+ */
+export async function deleteSale(id: string): Promise<void> {
+  const supabase = createClient()
+
+  try {
+    const {
+      data: { user },
+    } = await supabase.auth.getUser()
+
+    if (!user) {
+      throw new Error('Usuário não autenticado')
+    }
+
+    // Get sale with items before deleting
+    const sale = await getSaleById(id)
+
+    if (!sale.sale_items || sale.sale_items.length === 0) {
+      throw new Error('Venda sem itens não pode ser deletada')
+    }
+
+    // Return products to stock
+    for (const item of sale.sale_items) {
+      if (item.product_id) {
+        // Get current product stock
+        const { data: product, error: productError } = await supabase
+          .from('products')
+          .select('quantity')
+          .eq('id', item.product_id)
+          .single()
+
+        if (productError) {
+          console.error('Error fetching product:', productError)
+          continue
+        }
+
+        // Update product quantity
+        const { error: updateError } = await supabase
+          .from('products')
+          .update({ quantity: product.quantity + item.quantity })
+          .eq('id', item.product_id)
+
+        if (updateError) {
+          console.error('Error updating product quantity:', updateError)
+        }
+
+        // Create inventory movement for stock return
+        await supabase.from('inventory_movements').insert({
+          user_id: user.id,
+          product_id: item.product_id,
+          movement_type: 'sale_return',
+          quantity_change: item.quantity,
+          quantity_before: product.quantity,
+          quantity_after: product.quantity + item.quantity,
+          reference_id: sale.id,
+          notes: `Devolução de estoque - venda ${sale.id} deletada`,
+        })
+      }
+    }
+
+    // Update customer metrics
+    if (sale.customer_id) {
+      const { data: customer } = await supabase
+        .from('customers')
+        .select('purchase_count, total_purchases')
+        .eq('id', sale.customer_id)
+        .single()
+
+      if (customer) {
+        await supabase
+          .from('customers')
+          .update({
+            purchase_count: Math.max(0, customer.purchase_count - 1),
+            total_purchases: Math.max(0, customer.total_purchases - sale.total_amount),
+          })
+          .eq('id', sale.customer_id)
+      }
+    }
+
+    // Delete sale (will cascade to sale_items)
+    const { error: deleteError } = await supabase
+      .from('sales')
+      .delete()
+      .eq('id', id)
+
+    if (deleteError) throw deleteError
+  } catch (error) {
+    console.error('Error deleting sale:', error)
+    if (error instanceof Error) {
+      throw error
+    }
+    throw new Error('Erro ao deletar venda. Tente novamente')
+  }
+}

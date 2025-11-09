@@ -16,7 +16,7 @@ import {
   getSalesChartData,
 } from '@/lib/services/salesService'
 import { getDateRange } from '@/lib/utils/formatters'
-import { Plus, RefreshCw, TrendingUp } from 'lucide-react'
+import { Plus, RefreshCw, TrendingUp, ShoppingBag, Eye } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 import { useAuth } from '@/lib/hooks/useAuth'
 
@@ -24,6 +24,7 @@ export default function DashboardPage() {
   const [selectedPeriod, setSelectedPeriod] = useState<'today' | 'week' | '30days' | 'month'>('30days')
   const [isRefreshing, setIsRefreshing] = useState(false)
   const [isNewSaleOpen, setIsNewSaleOpen] = useState(false)
+  const [isFabOpen, setIsFabOpen] = useState(false)
   const queryClient = useQueryClient()
   const { user } = useAuth()
 
@@ -154,15 +155,72 @@ export default function DashboardPage() {
           </div>
         </div>
 
-        {/* Floating Action Button (Mobile Only) */}
+        {/* Floating Action Button with Menu (Mobile Only) */}
         {!isNewSaleOpen && (
-          <button
-            onClick={handleAddSale}
-            className="fixed bottom-24 right-6 sm:hidden bg-[#C49A9A] hover:bg-[#B38989] text-white p-4 rounded-full shadow-lg transition-all hover:scale-110 active:scale-95 z-[60]"
-            aria-label="Nova Venda"
-          >
-            <Plus className="h-6 w-6" />
-          </button>
+          <div className="fixed bottom-24 right-6 sm:hidden z-[60]">
+            {/* Backdrop */}
+            {isFabOpen && (
+              <div
+                className="fixed inset-0 bg-black/20 -z-10"
+                onClick={() => setIsFabOpen(false)}
+              />
+            )}
+
+            {/* Action Buttons */}
+            <div className="flex flex-col items-end gap-3 mb-3">
+              {/* View Sales Button */}
+              <a
+                href="/sales"
+                className={`flex items-center gap-3 bg-[#A1887F] text-[#E0DCD1] px-4 py-3 rounded-full shadow-lg transition-all ${
+                  isFabOpen
+                    ? 'opacity-100 translate-y-0'
+                    : 'opacity-0 translate-y-4 pointer-events-none'
+                }`}
+                style={{
+                  transitionDuration: '300ms',
+                  transitionDelay: isFabOpen ? '100ms' : '0ms',
+                }}
+              >
+                <span className="font-medium whitespace-nowrap">Ver Vendas</span>
+                <div className="bg-[#C49A9A] p-2 rounded-full">
+                  <Eye className="h-5 w-5 text-[#202020]" />
+                </div>
+              </a>
+
+              {/* New Sale Button */}
+              <button
+                onClick={() => {
+                  setIsFabOpen(false)
+                  handleAddSale()
+                }}
+                className={`flex items-center gap-3 bg-[#A1887F] text-[#E0DCD1] px-4 py-3 rounded-full shadow-lg transition-all ${
+                  isFabOpen
+                    ? 'opacity-100 translate-y-0'
+                    : 'opacity-0 translate-y-4 pointer-events-none'
+                }`}
+                style={{
+                  transitionDuration: '300ms',
+                  transitionDelay: isFabOpen ? '50ms' : '0ms',
+                }}
+              >
+                <span className="font-medium whitespace-nowrap">Nova Venda</span>
+                <div className="bg-[#C49A9A] p-2 rounded-full">
+                  <ShoppingBag className="h-5 w-5 text-[#202020]" />
+                </div>
+              </button>
+            </div>
+
+            {/* Main FAB Button */}
+            <button
+              onClick={() => setIsFabOpen(!isFabOpen)}
+              className={`bg-[#C49A9A] hover:bg-[#B38989] text-white p-4 rounded-full shadow-lg transition-all hover:scale-110 active:scale-95 ${
+                isFabOpen ? 'rotate-45' : 'rotate-0'
+              }`}
+              aria-label="Menu de ações"
+            >
+              <Plus className="h-6 w-6" />
+            </button>
+          </div>
         )}
 
         {/* New Sale Wizard */}
@@ -229,15 +287,72 @@ export default function DashboardPage() {
         </div>
       </div>
 
-      {/* Floating Action Button (Mobile Only) - Above BottomNav */}
+      {/* Floating Action Button with Menu (Mobile Only) - Above BottomNav */}
       {!isNewSaleOpen && (
-        <button
-          onClick={handleAddSale}
-          className="fixed bottom-24 right-6 sm:hidden bg-[#C49A9A] hover:bg-[#B38989] text-white p-4 rounded-full shadow-lg transition-all hover:scale-110 active:scale-95 z-[60]"
-          aria-label="Nova Venda"
-        >
-          <Plus className="h-6 w-6" />
-        </button>
+        <div className="fixed bottom-24 right-6 sm:hidden z-[60]">
+          {/* Backdrop */}
+          {isFabOpen && (
+            <div
+              className="fixed inset-0 bg-black/20 -z-10"
+              onClick={() => setIsFabOpen(false)}
+            />
+          )}
+
+          {/* Action Buttons */}
+          <div className="flex flex-col items-end gap-3 mb-3">
+            {/* View Sales Button */}
+            <a
+              href="/sales"
+              className={`flex items-center gap-3 bg-[#A1887F] text-[#E0DCD1] px-4 py-3 rounded-full shadow-lg transition-all ${
+                isFabOpen
+                  ? 'opacity-100 translate-y-0'
+                  : 'opacity-0 translate-y-4 pointer-events-none'
+              }`}
+              style={{
+                transitionDuration: '300ms',
+                transitionDelay: isFabOpen ? '100ms' : '0ms',
+              }}
+            >
+              <span className="font-medium whitespace-nowrap">Ver Vendas</span>
+              <div className="bg-[#C49A9A] p-2 rounded-full">
+                <Eye className="h-5 w-5 text-[#202020]" />
+              </div>
+            </a>
+
+            {/* New Sale Button */}
+            <button
+              onClick={() => {
+                setIsFabOpen(false)
+                handleAddSale()
+              }}
+              className={`flex items-center gap-3 bg-[#A1887F] text-[#E0DCD1] px-4 py-3 rounded-full shadow-lg transition-all ${
+                isFabOpen
+                  ? 'opacity-100 translate-y-0'
+                  : 'opacity-0 translate-y-4 pointer-events-none'
+              }`}
+              style={{
+                transitionDuration: '300ms',
+                transitionDelay: isFabOpen ? '50ms' : '0ms',
+              }}
+            >
+              <span className="font-medium whitespace-nowrap">Nova Venda</span>
+              <div className="bg-[#C49A9A] p-2 rounded-full">
+                <ShoppingBag className="h-5 w-5 text-[#202020]" />
+              </div>
+            </button>
+          </div>
+
+          {/* Main FAB Button */}
+          <button
+            onClick={() => setIsFabOpen(!isFabOpen)}
+            className={`bg-[#C49A9A] hover:bg-[#B38989] text-white p-4 rounded-full shadow-lg transition-all hover:scale-110 active:scale-95 ${
+              isFabOpen ? 'rotate-45' : 'rotate-0'
+            }`}
+            aria-label="Menu de ações"
+          >
+            <Plus className="h-6 w-6" />
+          </button>
+        </div>
       )}
 
       {/* New Sale Wizard */}
