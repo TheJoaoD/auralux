@@ -3,7 +3,8 @@
 import { useState } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { MainLayout } from '@/components/layout/MainLayout'
-import { getRecentSales, deleteSale } from '@/lib/services/salesService'
+import { getPaginatedSales, deleteSale } from '@/lib/services/salesService'
+import { SimplePagination } from '@/components/ui/simple-pagination'
 import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
@@ -33,17 +34,22 @@ export default function SalesPage() {
   const queryClient = useQueryClient()
   const [selectedSale, setSelectedSale] = useState<Sale | null>(null)
   const [isDetailOpen, setIsDetailOpen] = useState(false)
+  const [currentPage, setCurrentPage] = useState(1)
+  const pageSize = 6
 
-  // Fetch recent sales
-  const { data: sales, isLoading } = useQuery({
-    queryKey: ['recent-sales'],
-    queryFn: () => getRecentSales(50),
+  // Fetch paginated sales
+  const { data: paginatedData, isLoading } = useQuery({
+    queryKey: ['paginated-sales', currentPage, pageSize],
+    queryFn: () => getPaginatedSales({ page: currentPage, pageSize }),
   })
+
+  const sales = paginatedData?.sales || []
 
   // Delete mutation
   const deleteMutation = useMutation({
     mutationFn: deleteSale,
     onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['paginated-sales'] })
       queryClient.invalidateQueries({ queryKey: ['recent-sales'] })
       queryClient.invalidateQueries({ queryKey: ['sales'] })
       toast.success('Venda deletada e estoque devolvido!')
@@ -198,6 +204,20 @@ export default function SalesPage() {
               </p>
             </CardContent>
           </Card>
+        )}
+
+        {/* Pagination */}
+        {paginatedData && paginatedData.totalPages > 1 && (
+          <div className="mt-6">
+            <SimplePagination
+              currentPage={paginatedData.page}
+              totalPages={paginatedData.totalPages}
+              onPageChange={setCurrentPage}
+              hasNextPage={paginatedData.hasNextPage}
+              hasPreviousPage={paginatedData.hasPreviousPage}
+              totalItems={paginatedData.total}
+            />
+          </div>
         )}
 
         {/* Sale Detail Dialog */}

@@ -465,6 +465,92 @@ export async function createSale(input: CreateSaleInput): Promise<Sale> {
 }
 
 /**
+ * Gets paginated sales with total count
+ */
+export async function getPaginatedSales(params: {
+  page: number
+  pageSize: number
+}): Promise<{
+  sales: Sale[]
+  total: number
+  page: number
+  pageSize: number
+  totalPages: number
+  hasNextPage: boolean
+  hasPreviousPage: boolean
+}> {
+  const supabase = createClient()
+
+  try {
+    const {
+      data: { user },
+    } = await supabase.auth.getUser()
+
+    if (!user) {
+      throw new Error('Usuário não autenticado')
+    }
+
+    const { page, pageSize } = params
+    const from = (page - 1) * pageSize
+    const to = from + pageSize - 1
+
+    // Get total count
+    const { count, error: countError } = await supabase
+      .from('sales')
+      .select('*', { count: 'exact', head: true })
+
+    if (countError) throw countError
+
+    const total = count || 0
+    const totalPages = Math.ceil(total / pageSize)
+
+    // Get paginated data
+    const { data, error } = await supabase
+      .from('sales')
+      .select(`
+        *,
+        customer:customers!sales_customer_id_fkey (
+          id,
+          full_name,
+          email
+        ),
+        sale_items (
+          id,
+          product_name,
+          quantity,
+          unit_price
+        )
+      `)
+      .order('created_at', { ascending: false })
+      .range(from, to)
+
+    if (error) throw error
+
+    // Add computed discount_amount field
+    const salesWithDiscount = (data || []).map((sale) => ({
+      ...sale,
+      discount_amount:
+        sale.payment_method === 'installment'
+          ? sale.total_amount - (sale.actual_amount_received || 0)
+          : 0,
+    }))
+
+    return {
+      sales: salesWithDiscount,
+      total,
+      page,
+      pageSize,
+      totalPages,
+      hasNextPage: page < totalPages,
+      hasPreviousPage: page > 1,
+    }
+  } catch (error) {
+    console.error('Error fetching paginated sales:', error)
+    throw new Error('Erro ao carregar vendas. Tente novamente')
+  }
+}
+
+/**
  * Gets a single sale by ID with all details
  */
 export async function getSaleById(id: string): Promise<Sale> {
