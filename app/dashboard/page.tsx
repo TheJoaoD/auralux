@@ -176,18 +176,18 @@ export default function DashboardPage() {
                 href="/sales"
                 className={`flex items-center gap-3 bg-[#A1887F] text-[#E0DCD1] px-4 py-3 rounded-full shadow-lg transition-all ${
                   isFabOpen
-                    ? 'opacity-100 translate-y-0'
-                    : 'opacity-0 translate-y-4 pointer-events-none'
+                    ? 'opacity-100 translate-x-0'
+                    : 'opacity-0 translate-x-20 pointer-events-none'
                 }`}
                 style={{
                   transitionDuration: '300ms',
                   transitionDelay: isFabOpen ? '100ms' : '0ms',
                 }}
               >
-                <span className="font-medium whitespace-nowrap">Ver Vendas</span>
                 <div className="bg-[#C49A9A] p-2 rounded-full">
                   <Eye className="h-5 w-5 text-[#202020]" />
                 </div>
+                <span className="font-medium whitespace-nowrap">Ver Vendas</span>
               </a>
 
               {/* New Sale Button */}
@@ -198,18 +198,18 @@ export default function DashboardPage() {
                 }}
                 className={`flex items-center gap-3 bg-[#A1887F] text-[#E0DCD1] px-4 py-3 rounded-full shadow-lg transition-all ${
                   isFabOpen
-                    ? 'opacity-100 translate-y-0'
-                    : 'opacity-0 translate-y-4 pointer-events-none'
+                    ? 'opacity-100 translate-x-0'
+                    : 'opacity-0 translate-x-20 pointer-events-none'
                 }`}
                 style={{
                   transitionDuration: '300ms',
                   transitionDelay: isFabOpen ? '50ms' : '0ms',
                 }}
               >
-                <span className="font-medium whitespace-nowrap">Nova Venda</span>
                 <div className="bg-[#C49A9A] p-2 rounded-full">
                   <ShoppingBag className="h-5 w-5 text-[#202020]" />
                 </div>
+                <span className="font-medium whitespace-nowrap">Nova Venda</span>
               </button>
             </div>
 
@@ -321,18 +321,18 @@ export default function DashboardPage() {
               href="/sales"
               className={`flex items-center gap-3 bg-[#A1887F] text-[#E0DCD1] px-4 py-3 rounded-full shadow-lg transition-all ${
                 isFabOpen
-                  ? 'opacity-100 translate-y-0'
-                  : 'opacity-0 translate-y-4 pointer-events-none'
+                  ? 'opacity-100 translate-x-0'
+                  : 'opacity-0 translate-x-20 pointer-events-none'
               }`}
               style={{
                 transitionDuration: '300ms',
                 transitionDelay: isFabOpen ? '100ms' : '0ms',
               }}
             >
-              <span className="font-medium whitespace-nowrap">Ver Vendas</span>
               <div className="bg-[#C49A9A] p-2 rounded-full">
                 <Eye className="h-5 w-5 text-[#202020]" />
               </div>
+              <span className="font-medium whitespace-nowrap">Ver Vendas</span>
             </a>
 
             {/* New Sale Button */}
@@ -343,18 +343,18 @@ export default function DashboardPage() {
               }}
               className={`flex items-center gap-3 bg-[#A1887F] text-[#E0DCD1] px-4 py-3 rounded-full shadow-lg transition-all ${
                 isFabOpen
-                  ? 'opacity-100 translate-y-0'
-                  : 'opacity-0 translate-y-4 pointer-events-none'
+                  ? 'opacity-100 translate-x-0'
+                  : 'opacity-0 translate-x-20 pointer-events-none'
               }`}
               style={{
                 transitionDuration: '300ms',
                 transitionDelay: isFabOpen ? '50ms' : '0ms',
               }}
             >
-              <span className="font-medium whitespace-nowrap">Nova Venda</span>
               <div className="bg-[#C49A9A] p-2 rounded-full">
                 <ShoppingBag className="h-5 w-5 text-[#202020]" />
               </div>
+              <span className="font-medium whitespace-nowrap">Nova Venda</span>
             </button>
           </div>
 
