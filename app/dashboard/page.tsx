@@ -16,7 +16,7 @@ import {
   getSalesChartData,
 } from '@/lib/services/salesService'
 import { getDateRange } from '@/lib/utils/formatters'
-import { Plus, RefreshCw, TrendingUp, ShoppingBag, Eye } from 'lucide-react'
+import { Plus, RefreshCw, TrendingUp, ShoppingBag, Eye, Filter } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 import { useAuth } from '@/lib/hooks/useAuth'
 
@@ -25,6 +25,7 @@ export default function DashboardPage() {
   const [isRefreshing, setIsRefreshing] = useState(false)
   const [isNewSaleOpen, setIsNewSaleOpen] = useState(false)
   const [isFabOpen, setIsFabOpen] = useState(false)
+  const [showFilters, setShowFilters] = useState(false)
   const queryClient = useQueryClient()
   const { user } = useAuth()
 
@@ -41,7 +42,7 @@ export default function DashboardPage() {
   // Fetch recent sales
   const { data: recentSales, isLoading: salesLoading } = useQuery({
     queryKey: ['recent-sales'],
-    queryFn: () => getRecentSales(10),
+    queryFn: () => getRecentSales(5),
     refetchInterval: 60000,
     staleTime: 30000,
   })
@@ -116,11 +117,12 @@ export default function DashboardPage() {
       <MainLayout>
         <div className="container max-w-4xl mx-auto px-4 py-6">
           {/* Header */}
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
+          <div className="flex items-center justify-between mb-6">
             <h1 className="text-2xl font-bold text-[#E0DCD1]">Dashboard de Vendas</h1>
+            {/* Add Sale Button (Desktop Only) */}
             <button
               onClick={handleAddSale}
-              className="bg-[#C49A9A] hover:bg-[#B38989] text-[#202020] font-semibold py-3 px-6 rounded-lg transition-colors flex items-center justify-center gap-2 min-h-[44px]"
+              className="hidden sm:flex bg-[#C49A9A] hover:bg-[#B38989] text-[#202020] font-semibold py-3 px-6 rounded-lg transition-colors items-center justify-center gap-2 min-h-[44px]"
             >
               <Plus className="h-5 w-5" />
               Nova Venda
@@ -157,7 +159,7 @@ export default function DashboardPage() {
 
         {/* Floating Action Button with Menu (Mobile Only) */}
         {!isNewSaleOpen && (
-          <div className="fixed bottom-24 right-6 sm:hidden z-[60]">
+          <div className="fixed bottom-32 right-6 sm:hidden z-[60]">
             {/* Backdrop */}
             {isFabOpen && (
               <div
@@ -233,34 +235,45 @@ export default function DashboardPage() {
     <MainLayout>
       <div className="container max-w-7xl mx-auto px-4 pb-8">
         {/* Header Section */}
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pt-4 pb-6">
-          <h1 className="text-2xl font-bold text-[#E0DCD1]">Dashboard de Vendas</h1>
+        <div className="flex flex-col gap-4 pt-4 pb-6">
+          <div className="flex items-center justify-between">
+            <h1 className="text-2xl font-bold text-[#E0DCD1]">Dashboard de Vendas</h1>
 
-          <div className="flex items-center gap-3">
-            {/* Refresh Button */}
-            <button
-              onClick={handleRefresh}
-              disabled={isRefreshing}
-              className="p-3 bg-[#A1887F] hover:bg-[#8D7A6F] text-[#E0DCD1] rounded-lg transition-colors disabled:opacity-50 min-h-[44px] min-w-[44px] flex items-center justify-center"
-              aria-label="Atualizar dados"
-            >
-              <RefreshCw className={`h-5 w-5 ${isRefreshing ? 'animate-spin' : ''}`} />
-            </button>
+            <div className="flex items-center gap-3">
+              {/* Filter Toggle Button (Mobile Only) */}
+              <button
+                onClick={() => setShowFilters(!showFilters)}
+                className="sm:hidden p-3 bg-[#A1887F] hover:bg-[#8D7A6F] text-[#E0DCD1] rounded-lg transition-colors min-h-[44px] min-w-[44px] flex items-center justify-center"
+                aria-label="Filtros"
+              >
+                <Filter className="h-5 w-5" />
+              </button>
 
-            {/* Add Sale Button */}
-            <button
-              onClick={handleAddSale}
-              className="bg-[#C49A9A] hover:bg-[#B38989] text-[#202020] font-semibold py-3 px-6 rounded-lg transition-colors flex items-center gap-2 min-h-[44px]"
-            >
-              <Plus className="h-5 w-5" />
-              Nova Venda
-            </button>
+              {/* Refresh Button */}
+              <button
+                onClick={handleRefresh}
+                disabled={isRefreshing}
+                className="p-3 bg-[#A1887F] hover:bg-[#8D7A6F] text-[#E0DCD1] rounded-lg transition-colors disabled:opacity-50 min-h-[44px] min-w-[44px] flex items-center justify-center"
+                aria-label="Atualizar dados"
+              >
+                <RefreshCw className={`h-5 w-5 ${isRefreshing ? 'animate-spin' : ''}`} />
+              </button>
+
+              {/* Add Sale Button (Desktop Only) */}
+              <button
+                onClick={handleAddSale}
+                className="hidden sm:flex bg-[#C49A9A] hover:bg-[#B38989] text-[#202020] font-semibold py-3 px-6 rounded-lg transition-colors items-center gap-2 min-h-[44px]"
+              >
+                <Plus className="h-5 w-5" />
+                Nova Venda
+              </button>
+            </div>
           </div>
-        </div>
 
-        {/* Date Range Filter */}
-        <div className="mb-6">
-          <DateRangeFilter selectedPeriod={selectedPeriod} onPeriodChange={setSelectedPeriod} />
+          {/* Date Range Filter - Hidden on mobile unless showFilters is true */}
+          <div className={`${showFilters ? 'block' : 'hidden'} sm:block`}>
+            <DateRangeFilter selectedPeriod={selectedPeriod} onPeriodChange={setSelectedPeriod} />
+          </div>
         </div>
 
         {/* Metrics Cards */}
@@ -289,7 +302,7 @@ export default function DashboardPage() {
 
       {/* Floating Action Button with Menu (Mobile Only) - Above BottomNav */}
       {!isNewSaleOpen && (
-        <div className="fixed bottom-24 right-6 sm:hidden z-[60]">
+        <div className="fixed bottom-32 right-6 sm:hidden z-[60]">
           {/* Backdrop */}
           {isFabOpen && (
             <div
