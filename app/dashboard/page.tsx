@@ -159,7 +159,7 @@ export default function DashboardPage() {
 
         {/* Floating Action Button with Menu (Mobile Only) */}
         {!isNewSaleOpen && (
-          <div className="fixed bottom-20 sm:hidden z-[60]" style={{ right: 'calc(16.666% - 28px)' }}>
+          <div className="fixed bottom-20 sm:hidden z-[60]" style={{ left: '66.666%', transform: 'translateX(-50%)' }}>
             {/* Backdrop */}
             {isFabOpen && (
               <div
@@ -302,7 +302,7 @@ export default function DashboardPage() {
 
       {/* Floating Action Button with Menu (Mobile Only) - Above BottomNav */}
       {!isNewSaleOpen && (
-        <div className="fixed bottom-20 sm:hidden z-[60]" style={{ right: 'calc(16.666% - 28px)' }}>
+        <div className="fixed bottom-20 sm:hidden z-[60]" style={{ left: '66.666%', transform: 'translateX(-50%)' }}>
           {/* Backdrop */}
           {isFabOpen && (
             <div
