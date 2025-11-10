@@ -2,14 +2,16 @@
 
 import type React from "react"
 
-import { useState } from "react"
-import { Package, DollarSign, TrendingDown, AlertTriangle, Upload } from "lucide-react"
+import { useState, useEffect } from "react"
+import { Package, DollarSign, TrendingDown, AlertTriangle, Upload, Eye, EyeOff } from "lucide-react"
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog'
+import { Switch } from '@/components/ui/switch'
+import { toast } from 'sonner'
 
 interface Product {
   id: string
@@ -38,6 +40,80 @@ export function ProductDetailModal({ product, open, onOpenChange, onUpdate }: Pr
   const [adjustmentValue, setAdjustmentValue] = useState("")
   const [adjustmentType, setAdjustmentType] = useState<"add" | "subtract">("add")
   const [imageUrl, setImageUrl] = useState(product.image || "")
+  const [isInCatalog, setIsInCatalog] = useState(false)
+  const [isFeatured, setIsFeatured] = useState(false)
+  const [loadingCatalog, setLoadingCatalog] = useState(false)
+
+  // Check if product is in catalog when modal opens
+  useEffect(() => {
+    if (open && product.id) {
+      checkCatalogStatus()
+    }
+  }, [open, product.id])
+
+  const checkCatalogStatus = async () => {
+    try {
+      const response = await fetch(`/api/catalog/check?productId=${product.id}`)
+      const data = await response.json()
+      setIsInCatalog(data.inCatalog)
+      setIsFeatured(data.featured || false)
+    } catch (error) {
+      console.error('Error checking catalog status:', error)
+    }
+  }
+
+  const handleToggleCatalog = async (enabled: boolean) => {
+    setLoadingCatalog(true)
+    try {
+      const response = await fetch('/api/catalog/toggle', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          productId: product.id,
+          visible: enabled,
+        }),
+      })
+
+      if (!response.ok) throw new Error('Failed to update catalog')
+
+      setIsInCatalog(enabled)
+      toast.success(enabled ? 'Produto adicionado ao catálogo' : 'Produto removido do catálogo')
+    } catch (error) {
+      console.error('Error toggling catalog:', error)
+      toast.error('Erro ao atualizar catálogo')
+    } finally {
+      setLoadingCatalog(false)
+    }
+  }
+
+  const handleToggleFeatured = async (featured: boolean) => {
+    if (!isInCatalog) {
+      toast.error('Produto precisa estar no catálogo primeiro')
+      return
+    }
+
+    setLoadingCatalog(true)
+    try {
+      const response = await fetch('/api/catalog/featured', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          productId: product.id,
+          featured,
+        }),
+      })
+
+      if (!response.ok) throw new Error('Failed to update featured')
+
+      setIsFeatured(featured)
+      toast.success(featured ? 'Produto marcado como destaque' : 'Produto removido dos destaques')
+    } catch (error) {
+      console.error('Error toggling featured:', error)
+      toast.error('Erro ao atualizar destaque')
+    } finally {
+      setLoadingCatalog(false)
+    }
+  }
 
   const profit = product.price - product.cost
   const margin = ((profit / product.price) * 100).toFixed(1)
@@ -85,6 +161,40 @@ export function ProductDetailModal({ product, open, onOpenChange, onUpdate }: Pr
             Low stock - Consider reordering
           </div>
         )}
+
+        {/* Catalog Controls */}
+        <div className="p-4 rounded-lg bg-background border border-border space-y-3">
+          <h3 className="text-sm font-semibold text-card-foreground flex items-center gap-2">
+            <Eye size={16} className="text-accent" />
+            Controles do Catálogo
+          </h3>
+
+          {/* Toggle Visibility */}
+          <div className="flex items-center justify-between">
+            <div className="flex-1">
+              <p className="text-sm font-medium text-card-foreground">Visível no Catálogo</p>
+              <p className="text-xs text-muted-foreground">Mostrar produto no catálogo público</p>
+            </div>
+            <Switch
+              checked={isInCatalog}
+              onCheckedChange={handleToggleCatalog}
+              disabled={loadingCatalog}
+            />
+          </div>
+
+          {/* Toggle Featured */}
+          <div className="flex items-center justify-between">
+            <div className="flex-1">
+              <p className="text-sm font-medium text-card-foreground">Produto Destaque</p>
+              <p className="text-xs text-muted-foreground">Exibir na home do catálogo</p>
+            </div>
+            <Switch
+              checked={isFeatured}
+              onCheckedChange={handleToggleFeatured}
+              disabled={loadingCatalog || !isInCatalog}
+            />
+          </div>
+        </div>
 
         <div className="space-y-4">
           {/* Product Image */}

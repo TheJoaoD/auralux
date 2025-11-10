@@ -2,7 +2,7 @@
 
 import { usePathname } from 'next/navigation'
 import Link from 'next/link'
-import { Users, LayoutDashboard, Package } from 'lucide-react'
+import { Users, LayoutDashboard, Package, Tag } from 'lucide-react'
 
 const navigation = [
   {
@@ -19,6 +19,11 @@ const navigation = [
     name: 'Estoque',
     href: '/inventory',
     icon: Package,
+  },
+  {
+    name: 'Catálogo',
+    href: '/catalogo-admin',
+    icon: Tag,
   },
 ]
 

@@ -1,0 +1,232 @@
+Auralux Project Directory Structure
+====================================
+
+/Users/joaod.nascimento/Downloads/code/
+│
+├── 📄 CODEBASE_EXPLORATION.md          [NEW] Detailed architecture documentation
+├── 📄 QUICK_REFERENCE.md                [NEW] Quick lookup guide
+├── 📄 package.json                      Next.js + React 19 + Supabase dependencies
+├── 📄 tsconfig.json                     TypeScript configuration
+├── 📄 middleware.ts                     Next.js middleware for auth
+├── 📄 .env.local                        Environment variables
+│
+├── 📁 app/                              [Next.js App Router]
+│   ├── 📄 layout.tsx                   Root layout (AuthProvider, QueryProvider)
+│   ├── 📄 page.tsx                     Home page
+│   ├── 📄 globals.css                  Global styles
+│   │
+│   ├── 📁 api/
+│   │   └── 📁 users/                   User management API routes
+│   │       ├── route.ts
+│   │       ├── [id]/route.ts
+│   │       └── create/route.ts
+│   │
+│   ├── 📁 auth/                        Authentication pages
+│   ├── 📁 login/                       Login page
+│   │
+│   ├── 📁 dashboard/                   Dashboard page (KPIs, charts, real-time)
+│   │   └── 📄 page.tsx
+│   │
+│   ├── 📁 inventory/                   Product inventory management
+│   │   ├── 📄 page.tsx                 Main inventory page (paginated products)
+│   │   └── 📁 history/                 Inventory movement history
+│   │       └── 📄 page.tsx
+│   │
+│   ├── 📁 sales/                       Sales management
+│   │   └── 📄 page.tsx                 Sales list with pagination & details
+│   │
+│   ├── 📁 customers/                   Customer management
+│   │   └── 📄 page.tsx
+│   │
+│   └── 📁 settings/                    Settings & configuration
+│       ├── 📄 page.tsx                 Settings hub
+│       ├── 📁 discounts/               Discount management
+│       │   └── 📄 page.tsx
+│       └── 📁 users/                   User management
+│           └── 📄 page.tsx
+│
+├── 📁 components/                       [React Components by Feature]
+│   ├── 📁 products/                     Product management components
+│   │   ├── 📄 AddProductModal.tsx       Create product form
+│   │   ├── 📄 EditProductModal.tsx      Edit product form
+│   │   ├── 📄 ProductGallery.tsx        Product grid/gallery view
+│   │   ├── 📄 ProductCard.tsx           Individual product card
+│   │   ├── 📄 ImageUpload.tsx           Image upload with validation
+│   │   └── 📄 InventoryMetrics.tsx      Inventory statistics
+│   │
+│   ├── 📁 sales/                        Sales wizard & components
+│   │   ├── 📄 NewSaleWizard.tsx         Multi-step sales creation
+│   │   ├── 📄 CustomerSelectionStep.tsx Customer selection
+│   │   ├── 📄 ProductSelectionStep.tsx  Product selection
+│   │   ├── 📄 PaymentMethodStep.tsx     Payment method selection
+│   │   ├── 📄 QuantitySelector.tsx      Quantity selection
+│   │   ├── 📄 ShoppingCart.tsx          Cart display
+│   │   ├── 📄 SaleSummary.tsx           Sale summary before confirm
+│   │   ├── 📄 InstallmentSelector.tsx   Installment configuration
+│   │   ├── 📄 ActualAmountModal.tsx     Payment amount modal
+│   │   └── 📁 steps/                    Step components
+│   │
+│   ├── 📁 dashboard/                    Dashboard analytics components
+│   │   ├── 📄 MetricsCards.tsx          KPI metric cards
+│   │   ├── 📄 SalesChart.tsx            Sales trend chart
+│   │   ├── 📄 RecentSalesList.tsx       Recent transactions
+│   │   ├── 📄 PaymentBreakdown.tsx      Payment method breakdown
+│   │   ├── 📄 DateRangeFilter.tsx       Date filter
+│   │   └── 📄 MetricCard.tsx            Individual metric
+│   │
+│   ├── 📁 customers/                    Customer components
+│   ├── 📁 discounts/                    Discount management components
+│   ├── 📁 inventory/                    Inventory components
+│   ├── 📁 categories/                   Category management components
+│   │
+│   ├── 📁 layout/                       Layout structure components
+│   │   ├── 📄 MainLayout.tsx            Main app layout wrapper
+│   │   ├── Navigation & Sidebar
+│   │
+│   ├── 📁 ui/                           Shadcn/ui reusable components
+│   │   ├── dialog.tsx
+│   │   ├── card.tsx
+│   │   ├── button.tsx
+│   │   ├── badge.tsx
+│   │   ├── form.tsx
+│   │   ├── input.tsx
+│   │   ├── simple-pagination.tsx
+│   │   └── ... (20+ more UI components)
+│   │
+│   ├── 📁 reports/                      Report components
+│   ├── 📁 screens/                      Screen components
+│   └── 📄 theme-provider.tsx            Theme configuration
+│
+├── 📁 lib/                              [Business Logic & Utilities]
+│   ├── 📁 services/                     Service layer (API clients)
+│   │   ├── 📄 productService.ts         Product CRUD & image upload/delete
+│   │   ├── 📄 categoryService.ts        Category management
+│   │   ├── 📄 salesService.ts           Sales CRUD & analytics
+│   │   ├── 📄 customerService.ts        Customer management
+│   │   ├── 📄 discountService.ts        Discount management
+│   │   ├── 📄 inventoryService.ts       Inventory tracking & history
+│   │   └── 📄 userService.ts            User management
+│   │
+│   ├── 📁 supabase/                     Supabase client setup
+│   │   ├── 📄 client.ts                 Browser client
+│   │   ├── 📄 server.ts                 Server client
+│   │   └── 📄 middleware.ts             Auth middleware
+│   │
+│   ├── 📁 contexts/                     React Contexts
+│   │   ├── 📄 AuthContext.tsx           User authentication context
+│   │   └── 📄 QueryProvider.tsx         React Query provider
+│   │
+│   ├── 📁 stores/                       Zustand state stores
+│   │   └── 📄 saleWizardStore.ts        Sales wizard state
+│   │
+│   ├── 📁 hooks/                        Custom React hooks
+│   │   └── 📄 useAuth.ts                Auth hook
+│   │
+│   ├── 📁 validations/                  Zod validation schemas
+│   │   ├── 📄 productSchemas.ts         Product validation
+│   │   ├── 📄 saleSchemas.ts            Sale validation
+│   │   ├── 📄 customerSchemas.ts        Customer validation
+│   │   ├── 📄 categorySchemas.ts        Category validation
+│   │   └── 📄 authSchemas.ts            Auth validation
+│   │
+│   ├── 📁 constants/                    Application constants
+│   ├── 📁 utils/                        Helper utilities
+│   │   ├── 📄 formatters.ts             Currency & date formatters
+│   │   └── ... (other utilities)
+│   │
+│   └── 📄 utils.ts                      General utilities
+│
+├── 📁 types/                            [TypeScript Type Definitions]
+│   ├── 📄 index.ts                      Main types (Customer, Product, Sale, etc.)
+│   └── 📄 supabase.ts                   Auto-generated database types
+│
+├── 📁 docs/                             [Documentation]
+│   ├── 📄 catalogo-architecture.md      Public catalog architecture (in design)
+│   ├── 📄 prd-catalogo.md               Catalog product requirements
+│   ├── 📄 architecture.md               Main architecture doc
+│   ├── 📄 README.md                     Project readme
+│   │
+│   ├── 📁 architecture/                 Architecture documentation
+│   │   ├── architecture-overview-c4-model.md
+│   │   ├── database-schema-migrations.md
+│   │   ├── authentication-architecture.md
+│   │   ├── service-layer-api-contracts.md
+│   │   ├── performance-strategy.md
+│   │   ├── security-architecture.md
+│   │   ├── real-time-architecture.md
+│   │   ├── sequence-diagrams.md
+│   │   └── ... (more architecture docs)
+│   │
+│   ├── 📁 prd/                          Product requirements for catalog
+│   │   ├── epic-list.md
+│   │   ├── requirements.md
+│   │   ├── user-interface-design-goals.md
+│   │   └── ... (6 epics for catalog feature)
+│   │
+│   └── 📁 sm-output/                    Sprint/project management output
+│
+├── 📁 .git/                             Git repository
+├── 📁 .next/                            Next.js build output
+├── 📁 node_modules/                     Dependencies
+│
+├── 🔧 .gitignore                        Git ignore rules
+├── 🔧 .mcp.json                         MCP configuration
+└── 🔧 components.json                   Shadcn/ui configuration
+
+
+KEY STATISTICS
+==============
+
+TypeScript/TSX Files:     175
+Service Files:            7
+Component Files:          ~60
+Page Routes:              8
+API Routes:               3
+Validation Schemas:       5
+Type Definition Files:    2
+
+Dependencies:             ~70 npm packages
+  - Next.js 16
+  - React 19.2
+  - Supabase client 2.80
+  - React Query 5.90
+  - Radix UI (12 components)
+  - Tailwind CSS 4
+  - Zod (validation)
+  - Zustand (state)
+  - Recharts (charts)
+
+
+DATA MODELS (Key Tables)
+========================
+
+users              Admin users
+├── products       Inventory items (with profit calculations)
+├── categories     Product categories
+├── customers      Customer records
+├── sales          Sales transactions
+├── sale_items     Individual items in sales
+├── discounts      Discount definitions
+└── inventory_     Movement history
+
+
+AUTHENTICATION METHODS
+======================
+
+Admin:   Supabase Auth (Email + Password)
+Catalog: Custom JWT + WhatsApp (In Design Phase)
+
+
+STATE MANAGEMENT
+================
+
+Server State:   React Query (caching, synchronization)
+Client State:   Zustand (wizard, cart, favorites)
+Context:        Auth + Query Provider
+
+
+This structure follows:
+- Feature-based component organization
+- Service layer abstraction
+- Type-safe development with TypeScript
+- Database isolation with Row Level Security (RLS)

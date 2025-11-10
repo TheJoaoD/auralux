@@ -1,4 +1,5 @@
 import { createServerClient } from '@supabase/ssr'
+import { createClient as createSupabaseClient } from '@supabase/supabase-js'
 import { cookies } from 'next/headers'
 import { Database } from '@/types/supabase'
 
@@ -26,5 +27,13 @@ export async function createClient() {
         },
       },
     }
+  )
+}
+
+// Build-time safe client (no cookies) - for generateStaticParams and other build-time functions
+export function createBuildClient() {
+  return createSupabaseClient<Database>(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
   )
 }
