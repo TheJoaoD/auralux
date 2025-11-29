@@ -1,8 +1,7 @@
 /**
  * Related Products Component
- * Epic 2 - Story 2.4: Detalhes do Produto
- *
- * Shows products from the same category (excluding current product)
+ * Horizontal scrollable carousel of related products
+ * Based on front-end-spec-catalogo.md
  */
 
 'use client'
@@ -24,18 +23,20 @@ export function RelatedProducts({
 
   // Filter out current product
   const relatedProducts =
-    data?.products.filter((p) => p.product_id !== currentProductId).slice(0, 4) ||
+    data?.products.filter((p) => p.product_id !== currentProductId).slice(0, 6) ||
     []
 
   if (isLoading) {
     return (
-      <section className="mt-12">
-        <h2 className="text-2xl font-bold text-foreground mb-6">
-          Produtos Relacionados
+      <section className="py-6">
+        <h2 className="text-lg font-semibold mb-4 px-4">
+          Você também vai gostar
         </h2>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div className="flex gap-3 overflow-x-auto scrollbar-hide px-4 -mx-4 pb-2 snap-x snap-mandatory">
           {Array.from({ length: 4 }).map((_, i) => (
-            <ProductCardSkeleton key={i} />
+            <div key={i} className="shrink-0 w-36 snap-start">
+              <ProductCardSkeleton />
+            </div>
           ))}
         </div>
       </section>
@@ -47,13 +48,15 @@ export function RelatedProducts({
   }
 
   return (
-    <section className="mt-12">
-      <h2 className="text-2xl font-bold text-foreground mb-6">
-        Produtos Relacionados
+    <section className="py-6 -mx-4">
+      <h2 className="text-lg font-semibold mb-4 px-4">
+        Você também vai gostar
       </h2>
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+      <div className="flex gap-3 overflow-x-auto scrollbar-hide px-4 pb-2 snap-x snap-mandatory">
         {relatedProducts.map((product) => (
-          <ProductCard key={product.id} product={product} />
+          <div key={product.id} className="shrink-0 w-36 snap-start">
+            <ProductCard product={product} variant="compact" />
+          </div>
         ))}
       </div>
     </section>

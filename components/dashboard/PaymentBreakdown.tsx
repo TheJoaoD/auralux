@@ -31,7 +31,7 @@ export function PaymentBreakdown({ breakdown, isLoading }: PaymentBreakdownProps
   }
 
   // Empty state
-  if (!breakdown || (breakdown.pix.count === 0 && breakdown.cash.count === 0 && breakdown.installment.count === 0)) {
+  if (!breakdown || (breakdown.pix.count === 0 && breakdown.cash.count === 0 && (breakdown.card?.count ?? 0) === 0 && breakdown.installment.count === 0)) {
     return (
       <div className="bg-[#A1887F] rounded-xl p-6">
         <h3 className="text-lg font-semibold text-[#E0DCD1] mb-4">Métodos de Pagamento</h3>
@@ -61,6 +61,12 @@ export function PaymentBreakdown({ breakdown, isLoading }: PaymentBreakdownProps
       data: breakdown.cash,
       color: '#2196F3',
       bgColor: 'bg-blue-500',
+    },
+    {
+      name: 'Cartao',
+      data: breakdown.card || { count: 0, percentage: 0, total: 0 },
+      color: '#9C27B0',
+      bgColor: 'bg-purple-500',
     },
     {
       name: 'Parcelado',
@@ -115,11 +121,11 @@ export function PaymentBreakdown({ breakdown, isLoading }: PaymentBreakdownProps
         <div className="flex justify-between items-center">
           <span className="text-sm font-medium text-[#E0DCD1]">Total</span>
           <span className="text-base font-bold text-[#E0DCD1]">
-            {formatCurrency(breakdown.pix.total + breakdown.cash.total + breakdown.installment.total)}
+            {formatCurrency(breakdown.pix.total + breakdown.cash.total + (breakdown.card?.total ?? 0) + breakdown.installment.total)}
           </span>
         </div>
         <div className="text-xs text-[#E0DCD1]/60 text-right mt-1">
-          {breakdown.pix.count + breakdown.cash.count + breakdown.installment.count} vendas
+          {breakdown.pix.count + breakdown.cash.count + (breakdown.card?.count ?? 0) + breakdown.installment.count} vendas
         </div>
       </div>
     </div>

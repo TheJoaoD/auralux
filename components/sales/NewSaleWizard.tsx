@@ -38,6 +38,8 @@ export function NewSaleWizard({ open, onOpenChange }: NewSaleWizardProps) {
     paymentMethod,
     installmentCount,
     actualAmountReceived,
+    downPayment,
+    downPaymentMethod,
     resetWizard,
   } = useSaleWizardStore()
 
@@ -77,6 +79,8 @@ export function NewSaleWizard({ open, onOpenChange }: NewSaleWizardProps) {
         payment_method: paymentMethod,
         installment_count: installmentCount || undefined,
         actual_amount_received: actualAmountReceived || undefined,
+        down_payment: downPayment || undefined,
+        down_payment_method: downPaymentMethod || undefined,
       })
 
       // Invalidate all affected queries
@@ -89,6 +93,8 @@ export function NewSaleWizard({ open, onOpenChange }: NewSaleWizardProps) {
         queryClient.invalidateQueries({ queryKey: ['all-products'] }), // All products list
         queryClient.invalidateQueries({ queryKey: ['customers'] }), // Purchase count updated
         queryClient.invalidateQueries({ queryKey: ['all-customers'] }), // All customers list
+        queryClient.invalidateQueries({ queryKey: ['installments'] }), // Installments created
+        queryClient.invalidateQueries({ queryKey: ['cash-flow'] }), // Cash flow entries created
       ])
 
       toast.success('Venda registrada com sucesso!')
@@ -138,9 +144,9 @@ export function NewSaleWizard({ open, onOpenChange }: NewSaleWizardProps) {
 
           {/* Progress Indicator */}
           <div className="px-6 py-4 bg-white border-b border-[#A1887F]/10">
-            <div className="flex items-center justify-between max-w-2xl mx-auto">
+            <div className="flex items-center justify-center max-w-md mx-auto">
               {steps.map((step, index) => (
-                <div key={step.number} className="flex items-center flex-1">
+                <div key={step.number} className="flex items-center">
                   {/* Step Circle */}
                   <div className="flex flex-col items-center">
                     <div
@@ -179,7 +185,7 @@ export function NewSaleWizard({ open, onOpenChange }: NewSaleWizardProps) {
                   {index < steps.length - 1 && (
                     <div
                       className={`
-                        flex-1 h-1 mx-4 rounded-full transition-all
+                        w-16 sm:w-24 h-1 mx-3 rounded-full transition-all
                         ${
                           currentStep > step.number
                             ? 'bg-[#C49A9A]'

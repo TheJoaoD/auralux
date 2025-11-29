@@ -10,6 +10,7 @@ interface SaleSummaryProps {
   paymentMethod: 'pix' | 'cash' | 'installment' | null
   installmentCount: number | null
   actualAmountReceived: number | null
+  downPayment?: number | null
 }
 
 const PAYMENT_METHOD_LABELS = {
@@ -24,6 +25,7 @@ export function SaleSummary({
   paymentMethod,
   installmentCount,
   actualAmountReceived,
+  downPayment,
 }: SaleSummaryProps) {
   const subtotal = cartItems.reduce((sum, item) => sum + item.subtotal, 0)
   const discount =
@@ -32,6 +34,10 @@ export function SaleSummary({
       : 0
   const discountPercentage = subtotal > 0 ? (discount / subtotal) * 100 : 0
   const finalTotal = paymentMethod === 'installment' && actualAmountReceived ? actualAmountReceived : subtotal
+
+  // Calculate installment values with down payment
+  const amountToFinance = subtotal - (downPayment || 0)
+  const installmentValue = installmentCount ? amountToFinance / installmentCount : 0
 
   return (
     <div className="bg-[#A1887F] rounded-xl p-6 space-y-5">
@@ -108,13 +114,30 @@ export function SaleSummary({
                 </p>
               </div>
 
-              {paymentMethod === 'installment' && installmentCount && (
+              {paymentMethod === 'installment' && downPayment && downPayment > 0 && (
                 <div className="flex items-center justify-between">
-                  <p className="text-sm text-[#E0DCD1]/70">Parcelas</p>
-                  <p className="text-base font-semibold text-[#E0DCD1]">
-                    {installmentCount}x
+                  <p className="text-sm text-[#E0DCD1]/70">Entrada</p>
+                  <p className="text-base font-semibold text-[#4CAF50]">
+                    {formatCurrency(downPayment)}
                   </p>
                 </div>
+              )}
+
+              {paymentMethod === 'installment' && installmentCount && (
+                <>
+                  <div className="flex items-center justify-between">
+                    <p className="text-sm text-[#E0DCD1]/70">A Parcelar</p>
+                    <p className="text-base font-semibold text-[#E0DCD1]">
+                      {formatCurrency(amountToFinance)}
+                    </p>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <p className="text-sm text-[#E0DCD1]/70">Parcelas</p>
+                    <p className="text-base font-semibold text-[#E0DCD1]">
+                      {installmentCount}x de {formatCurrency(installmentValue)}
+                    </p>
+                  </div>
+                </>
               )}
 
               {paymentMethod === 'installment' && discount > 0 && (

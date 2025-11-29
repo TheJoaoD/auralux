@@ -1,75 +1,95 @@
 /**
  * Product Actions Component
- * Epic 2 - Story 2.4: Detalhes do Produto
- *
- * Sticky bottom bar with Favorite and Add to Cart buttons
+ * Sticky bottom bar with WhatsApp contact button
  */
 
 'use client'
 
-import { useState } from 'react'
-import { Heart, ShoppingCart } from 'lucide-react'
+import { MessageCircle, Share2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { useCatalogAuth } from '@/lib/providers/catalog-auth-provider'
+import { cn } from '@/lib/utils'
 import type { CatalogProduct } from '@/lib/services/catalog'
 
 interface ProductActionsProps {
   product: CatalogProduct
 }
 
+// WhatsApp do gestor (configurável via env ou settings)
+const STORE_WHATSAPP = process.env.NEXT_PUBLIC_STORE_WHATSAPP || '+5563992933735'
+
 export function ProductActions({ product }: ProductActionsProps) {
-  const { isAuthenticated, openAuthModal } = useCatalogAuth()
-  const [isFavorite, setIsFavorite] = useState(false)
+  const isOutOfStock = product.quantity === 0
 
-  const handleFavoriteClick = () => {
-    if (!isAuthenticated) {
-      openAuthModal()
-      return
-    }
+  const handleWhatsAppClick = () => {
+    const message = encodeURIComponent(
+      `Olá! Tenho interesse no produto:\n\n` +
+      `*${product.name}*\n` +
+      `Preço: R$ ${product.sale_price.toFixed(2)}\n` +
+      (product.sku ? `Ref: ${product.sku}\n` : '') +
+      `\nPoderia me dar mais informações?`
+    )
 
-    // Toggle favorite (would call API here)
-    setIsFavorite(!isFavorite)
-
-    // Show toast (implement with toast library)
-    console.log(isFavorite ? 'Removido dos favoritos' : 'Adicionado aos favoritos')
+    const whatsappUrl = `https://wa.me/${STORE_WHATSAPP.replace(/\D/g, '')}?text=${message}`
+    window.open(whatsappUrl, '_blank')
   }
 
-  const handleAddToCart = () => {
-    if (!isAuthenticated) {
-      openAuthModal()
-      return
+  const handleShare = async () => {
+    const shareData = {
+      title: product.name,
+      text: `Confira: ${product.name} - R$ ${product.sale_price.toFixed(2)}`,
+      url: window.location.href,
     }
 
-    // Add to cart (would call API here)
-    console.log('Produto adicionado ao carrinho')
+    if (navigator.share) {
+      try {
+        await navigator.share(shareData)
+      } catch {
+        // User cancelled or error
+      }
+    } else {
+      // Fallback: copy to clipboard
+      await navigator.clipboard.writeText(window.location.href)
+    }
   }
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 bg-white border-t shadow-lg z-20">
+    <div
+      className="fixed bottom-0 left-0 right-0 z-50 bg-background/95 backdrop-blur-lg border-t border-border"
+      style={{ paddingBottom: 'env(safe-area-inset-bottom, 0px)' }}
+    >
       <div className="container mx-auto px-4 py-3">
         <div className="flex gap-3">
-          {/* Favorite Button */}
+          {/* Share Button */}
           <Button
             variant="outline"
             size="lg"
-            onClick={handleFavoriteClick}
-            className="flex-1 gap-2"
+            onClick={handleShare}
+            className="h-14 px-6 rounded-xl border-2 hover:border-primary/50"
           >
-            <Heart
-              className={`h-5 w-5 ${isFavorite ? 'fill-red-500 text-red-500' : ''}`}
-            />
-            {isFavorite ? 'Remover dos Favoritos' : 'Adicionar aos Favoritos'}
+            <Share2 className="h-5 w-5" />
+            <span className="sr-only md:not-sr-only md:ml-2">
+              Compartilhar
+            </span>
           </Button>
 
-          {/* Add to Cart Button */}
+          {/* WhatsApp Button */}
           <Button
             size="lg"
-            onClick={handleAddToCart}
-            className="flex-1 gap-2 bg-primary hover:bg-primary"
-            disabled={product.quantity === 0}
+            onClick={handleWhatsAppClick}
+            disabled={isOutOfStock}
+            className={cn(
+              'flex-1 h-14 text-base font-semibold rounded-xl transition-all duration-200',
+              'bg-green-600 hover:bg-green-700 text-white'
+            )}
           >
-            <ShoppingCart className="h-5 w-5" />
-            {product.quantity === 0 ? 'Indisponível' : 'Adicionar ao Carrinho'}
+            {isOutOfStock ? (
+              <span>Indisponível</span>
+            ) : (
+              <span className="flex items-center gap-2">
+                <MessageCircle className="h-5 w-5" />
+                Falar no WhatsApp
+              </span>
+            )}
           </Button>
         </div>
       </div>

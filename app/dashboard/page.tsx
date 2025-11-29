@@ -16,7 +16,7 @@ import {
   getSalesChartData,
 } from '@/lib/services/salesService'
 import { getDateRange } from '@/lib/utils/formatters'
-import { Plus, RefreshCw, TrendingUp, ShoppingBag, Eye, Filter } from 'lucide-react'
+import { Plus, RefreshCw, TrendingUp, ShoppingBag, Eye, Filter, Wallet } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 import { useAuth } from '@/lib/hooks/useAuth'
 
@@ -171,6 +171,25 @@ export default function DashboardPage() {
             <div className="fixed bottom-20 sm:hidden z-[60]" style={{ right: '1rem' }}>
               <div className="flex flex-col items-end gap-3">
                 {/* Action Buttons */}
+                {/* Recebíveis Button */}
+                <a
+                  href="/financeiro/recebiveis"
+                  className={`flex items-center gap-3 bg-[#A1887F] text-[#E0DCD1] px-4 py-3 rounded-full shadow-lg transition-all ${
+                    isFabOpen
+                      ? 'opacity-100 translate-x-0'
+                      : 'opacity-0 translate-x-20 pointer-events-none'
+                  }`}
+                  style={{
+                    transitionDuration: '300ms',
+                    transitionDelay: isFabOpen ? '150ms' : '0ms',
+                  }}
+                >
+                  <span className="font-medium whitespace-nowrap">Recebíveis</span>
+                  <div className="bg-green-500 p-2 rounded-full">
+                    <Wallet className="h-5 w-5 text-white" />
+                  </div>
+                </a>
+
                 {/* View Sales Button */}
                 <a
                   href="/sales"
@@ -316,6 +335,25 @@ export default function DashboardPage() {
           <div className="fixed bottom-20 sm:hidden z-[60]" style={{ right: '1rem' }}>
             <div className="flex flex-col items-end gap-3">
               {/* Action Buttons */}
+              {/* Recebíveis Button */}
+              <a
+                href="/financeiro/recebiveis"
+                className={`flex items-center gap-3 bg-[#A1887F] text-[#E0DCD1] px-4 py-3 rounded-full shadow-lg transition-all ${
+                  isFabOpen
+                    ? 'opacity-100 translate-x-0'
+                    : 'opacity-0 translate-x-20 pointer-events-none'
+                }`}
+                style={{
+                  transitionDuration: '300ms',
+                  transitionDelay: isFabOpen ? '150ms' : '0ms',
+                }}
+              >
+                <span className="font-medium whitespace-nowrap">Recebíveis</span>
+                <div className="bg-green-500 p-2 rounded-full">
+                  <Wallet className="h-5 w-5 text-white" />
+                </div>
+              </a>
+
               {/* View Sales Button */}
               <a
                 href="/sales"

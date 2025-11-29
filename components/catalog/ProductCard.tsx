@@ -1,107 +1,137 @@
 /**
  * Product Card Component
- * Epic 2 - Story 2.2: Home do Catálogo
- * Epic 3 - Story 3.1: Integrated favorites
- *
- * Displays product information in a card format with:
- * - Product image (lazy loaded with blur placeholder)
- * - Stock badges (Em breve / Indisponível)
- * - Product name and price
- * - Favorite icon (requires authentication)
+ * Premium mobile-first design - Vitrine pública
  */
 
 'use client'
 
 import Image from 'next/image'
 import Link from 'next/link'
-import { Heart } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
+import { cn } from '@/lib/utils'
 import type { CatalogProduct } from '@/lib/services/catalog'
-import { useCatalogAuth } from '@/lib/providers/catalog-auth-provider'
-import { useIsFavorite, useToggleFavorite } from '@/lib/hooks/use-favorites'
 
 interface ProductCardProps {
   product: CatalogProduct
+  variant?: 'default' | 'featured' | 'compact' | 'horizontal'
+  priority?: boolean
 }
 
 export function ProductCard({
   product,
+  variant = 'default',
+  priority = false,
 }: ProductCardProps) {
-  const { isAuthenticated, openAuthModal } = useCatalogAuth()
-  const { data: isFavorite = false } = useIsFavorite(product.product_id)
-  const { toggle, isLoading } = useToggleFavorite()
+  const stockBadge = getStockBadge(product.quantity, product.stock_return_date)
+  const isOutOfStock = product.quantity === 0
 
-  const handleFavoriteClick = (e: React.MouseEvent) => {
-    e.preventDefault() // Prevent navigation
-    e.stopPropagation()
-
-    if (!isAuthenticated) {
-      openAuthModal()
-      return
-    }
-
-    toggle(product.product_id, isFavorite)
+  // Variant-specific styles
+  const cardStyles = {
+    default: 'w-full',
+    featured: 'w-[200px] md:w-[240px]',
+    compact: 'w-full',
+    horizontal: 'w-full flex flex-row',
   }
 
-  // Determine stock badge
-  const stockBadge = getStockBadge(product.quantity, product.stock_return_date)
+  const imageAspect = {
+    default: 'aspect-[4/5]',
+    featured: 'aspect-[4/5]',
+    compact: 'aspect-square',
+    horizontal: 'aspect-square w-24 shrink-0',
+  }
 
-  return (
-    <Link
-      href={`/catalogo/produto/${product.product_id}`}
-      className="group block relative"
-      prefetch={true}
-    >
-      <div className="relative rounded-lg border border-border bg-white overflow-hidden transition-all hover:shadow-lg hover:border-primary/30">
-        {/* Image Container - 1:1 aspect ratio */}
-        <div className="relative aspect-square overflow-hidden bg-muted/50">
+  if (variant === 'horizontal') {
+    return (
+      <Link
+        href={`/catalogo/produto/${product.product_id}`}
+        className="group flex items-center gap-3 p-2 rounded-xl hover:bg-muted/50 transition-colors"
+      >
+        <div className={cn('relative rounded-lg overflow-hidden bg-muted', imageAspect[variant])}>
           <Image
             src={product.image_url || '/placeholder-product.jpg'}
             alt={product.name}
             fill
-            sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 25vw"
-            className="object-cover transition-transform group-hover:scale-105"
+            sizes="96px"
+            className="object-cover"
             loading="lazy"
           />
+        </div>
+        <div className="flex-1 min-w-0">
+          <h3 className="font-medium text-sm line-clamp-2">{product.name}</h3>
+          <p className="text-primary font-semibold mt-1">{formatPrice(product.sale_price)}</p>
+        </div>
+      </Link>
+    )
+  }
+
+  return (
+    <Link
+      href={`/catalogo/produto/${product.product_id}`}
+      className={cn('group block relative', cardStyles[variant])}
+      prefetch={true}
+    >
+      <div
+        className={cn(
+          'relative rounded-xl bg-card overflow-hidden catalog-card',
+          isOutOfStock && 'opacity-75'
+        )}
+      >
+        {/* Image Container */}
+        <div className={cn('relative overflow-hidden bg-muted', imageAspect[variant])}>
+          <Image
+            src={product.image_url || '/placeholder-product.jpg'}
+            alt={product.name}
+            fill
+            sizes={variant === 'featured' ? '240px' : '(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 25vw'}
+            className={cn(
+              'object-cover transition-transform duration-300',
+              !isOutOfStock && 'group-hover:scale-105'
+            )}
+            priority={priority}
+            loading={priority ? 'eager' : 'lazy'}
+          />
+
+          {/* Overlay gradient for text readability */}
+          <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
 
           {/* Stock Badge - Top Right */}
           {stockBadge && (
-            <div className="absolute top-2 right-2">
-              <Badge variant={stockBadge.variant}>{stockBadge.label}</Badge>
+            <div className="absolute top-3 right-3">
+              <Badge
+                variant={stockBadge.variant}
+                className="text-[10px] font-semibold px-2 py-0.5 shadow-sm"
+              >
+                {stockBadge.label}
+              </Badge>
             </div>
           )}
 
-          {/* Favorite Button - Top Left */}
-          <Button
-            variant="ghost"
-            size="icon"
-            className="absolute top-2 left-2 bg-white/90 hover:bg-white transition-colors"
-            onClick={handleFavoriteClick}
-            aria-label={isFavorite ? 'Remover dos favoritos' : 'Adicionar aos favoritos'}
-          >
-            <Heart
-              className={`h-5 w-5 transition-colors ${
-                isFavorite ? 'fill-red-500 text-red-500' : 'text-muted-foreground'
-              }`}
-            />
-          </Button>
+          {/* Out of stock overlay */}
+          {isOutOfStock && (
+            <div className="absolute inset-0 bg-background/50 flex items-center justify-center">
+              <span className="text-sm font-medium text-muted-foreground bg-background/80 px-3 py-1 rounded-full">
+                Indisponível
+              </span>
+            </div>
+          )}
         </div>
 
         {/* Product Info */}
-        <div className="p-4 space-y-2">
-          {/* Product Name - Truncate 2 lines */}
-          <h3 className="font-medium text-foreground line-clamp-2 min-h-[3rem]">
+        <div className="p-3 space-y-1.5">
+          {/* Category */}
+          {product.category && (
+            <p className="text-[11px] font-medium text-muted-foreground uppercase tracking-wider">
+              {product.category.name}
+            </p>
+          )}
+
+          {/* Product Name */}
+          <h3 className="font-medium text-sm leading-snug line-clamp-2 min-h-[2.5rem]">
             {product.name}
           </h3>
 
-          {/* Category */}
-          {product.category && (
-            <p className="text-xs text-muted-foreground">{product.category.name}</p>
-          )}
-
           {/* Price */}
-          <p className="text-xl font-semibold text-primary">
+          <p className="text-lg font-bold text-primary">
             {formatPrice(product.sale_price)}
           </p>
         </div>
@@ -124,13 +154,13 @@ function getStockBadge(
   if (stockReturnDate) {
     return {
       label: 'Em breve',
-      variant: 'secondary', // Warning yellow
+      variant: 'secondary',
     }
   }
 
   return {
     label: 'Indisponível',
-    variant: 'destructive', // Error red
+    variant: 'destructive',
   }
 }
 

@@ -13,8 +13,17 @@ export interface CartItem {
 
 /**
  * Payment Method type
+ * - pix: PIX transfer
+ * - cash: Cash payment
+ * - card: Credit/Debit card
+ * - installment: Installment sale (internal flag, not a real payment method)
  */
-export type PaymentMethod = 'pix' | 'cash' | 'installment'
+export type PaymentMethod = 'pix' | 'cash' | 'card' | 'installment'
+
+/**
+ * Down Payment Method type (how the down payment is received)
+ */
+export type DownPaymentMethod = 'pix' | 'cash' | 'card'
 
 /**
  * Helper function to calculate cart total
@@ -41,6 +50,8 @@ interface SaleWizardStore {
   paymentMethod: PaymentMethod | null
   installmentCount: number | null
   actualAmountReceived: number | null
+  downPayment: number | null
+  downPaymentMethod: DownPaymentMethod | null
   cartTotal: number
   cartItemCount: number
 
@@ -49,9 +60,11 @@ interface SaleWizardStore {
   addToCart: (product: Product, quantity: number) => void
   updateCartQuantity: (productId: string, quantity: number) => void
   removeFromCart: (productId: string) => void
-  setPaymentMethod: (method: PaymentMethod) => void
+  setPaymentMethod: (method: PaymentMethod | null) => void
   setInstallmentCount: (count: number | null) => void
   setActualAmountReceived: (amount: number | null) => void
+  setDownPayment: (amount: number | null) => void
+  setDownPaymentMethod: (method: DownPaymentMethod | null) => void
   setInstallmentDetails: (count: number, actualAmount: number) => void
   goToStep: (step: 1 | 2 | 3) => void
   resetWizard: () => void
@@ -70,6 +83,8 @@ export const useSaleWizardStore = create<SaleWizardStore>((set, get) => ({
   paymentMethod: null,
   installmentCount: null,
   actualAmountReceived: null,
+  downPayment: null,
+  downPaymentMethod: null,
   cartTotal: 0,
   cartItemCount: 0,
 
@@ -179,7 +194,7 @@ export const useSaleWizardStore = create<SaleWizardStore>((set, get) => ({
   },
 
   // Set Payment Method
-  setPaymentMethod: (method: PaymentMethod) => {
+  setPaymentMethod: (method: PaymentMethod | null) => {
     set({ paymentMethod: method })
   },
 
@@ -191,6 +206,16 @@ export const useSaleWizardStore = create<SaleWizardStore>((set, get) => ({
   // Set Actual Amount Received
   setActualAmountReceived: (amount: number | null) => {
     set({ actualAmountReceived: amount })
+  },
+
+  // Set Down Payment (Entrada/Sinal)
+  setDownPayment: (amount: number | null) => {
+    set({ downPayment: amount })
+  },
+
+  // Set Down Payment Method (forma de pagamento da entrada)
+  setDownPaymentMethod: (method: DownPaymentMethod | null) => {
+    set({ downPaymentMethod: method })
   },
 
   // Set Installment Details
@@ -238,6 +263,8 @@ export const useSaleWizardStore = create<SaleWizardStore>((set, get) => ({
       paymentMethod: null,
       installmentCount: null,
       actualAmountReceived: null,
+      downPayment: null,
+      downPaymentMethod: null,
       cartTotal: 0,
       cartItemCount: 0,
     })

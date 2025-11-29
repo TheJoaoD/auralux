@@ -44,7 +44,8 @@ export default function CatalogProductsPage() {
         search: debouncedSearch,
         category,
       }),
-    staleTime: 30000,
+    staleTime: 0, // Always fetch fresh data
+    refetchOnWindowFocus: true, // Refetch when coming back from preview
   })
 
   // Fetch categories
@@ -57,40 +58,16 @@ export default function CatalogProductsPage() {
   // Toggle visibility mutation
   const visibilityMutation = useMutation({
     mutationFn: ({ productId, visible }: { productId: string; visible: boolean }) => {
-      console.log('🔵 Mutation called:', { productId, visible })
       return updateProductVisibility(productId, visible)
     },
-    onMutate: async ({ productId, visible }) => {
-      console.log('🟡 onMutate:', { productId, visible })
-      await queryClient.cancelQueries({ queryKey: ['admin-products'] })
-
-      const previousData = queryClient.getQueryData(['admin-products', page, debouncedSearch, category])
-
-      queryClient.setQueryData(['admin-products', page, debouncedSearch, category], (old: any) => {
-        if (!old) return old
-        return {
-          ...old,
-          products: old.products.map((p: any) =>
-            p.id === productId ? { ...p, catalog_visible: visible } : p
-          ),
-        }
-      })
-
-      return { previousData }
-    },
-    onError: (error, _variables, context) => {
-      console.log('🔴 onError:', error)
-      queryClient.setQueryData(
-        ['admin-products', page, debouncedSearch, category],
-        context?.previousData
-      )
-      toast.error(error instanceof Error ? error.message : 'Erro ao atualizar visibilidade')
-    },
     onSuccess: (_data, { visible }) => {
-      console.log('🟢 onSuccess:', { visible })
       toast.success(visible ? 'Produto ativado no catálogo' : 'Produto desativado do catálogo')
+      // Refetch to get real data from server
+      queryClient.invalidateQueries({ queryKey: ['admin-products'] })
       queryClient.invalidateQueries({ queryKey: ['catalog-metrics'] })
-      // Don't invalidate admin-products to keep optimistic update
+    },
+    onError: (error) => {
+      toast.error(error instanceof Error ? error.message : 'Erro ao atualizar visibilidade')
     },
   })
 
@@ -98,34 +75,14 @@ export default function CatalogProductsPage() {
   const featuredMutation = useMutation({
     mutationFn: ({ productId, featured }: { productId: string; featured: boolean }) =>
       updateProductFeatured(productId, featured),
-    onMutate: async ({ productId, featured }) => {
-      await queryClient.cancelQueries({ queryKey: ['admin-products'] })
-
-      const previousData = queryClient.getQueryData(['admin-products', page, debouncedSearch, category])
-
-      queryClient.setQueryData(['admin-products', page, debouncedSearch, category], (old: any) => {
-        if (!old) return old
-        return {
-          ...old,
-          products: old.products.map((p: any) =>
-            p.id === productId ? { ...p, catalog_featured: featured } : p
-          ),
-        }
-      })
-
-      return { previousData }
-    },
-    onError: (error, _variables, context) => {
-      queryClient.setQueryData(
-        ['admin-products', page, debouncedSearch, category],
-        context?.previousData
-      )
-      toast.error(error instanceof Error ? error.message : 'Erro ao atualizar destaque')
-    },
     onSuccess: (_data, { featured }) => {
       toast.success(featured ? 'Produto adicionado aos destaques' : 'Produto removido dos destaques')
+      // Refetch to get real data from server
+      queryClient.invalidateQueries({ queryKey: ['admin-products'] })
       queryClient.invalidateQueries({ queryKey: ['catalog-metrics'] })
-      // Don't invalidate admin-products to keep optimistic update
+    },
+    onError: (error) => {
+      toast.error(error instanceof Error ? error.message : 'Erro ao atualizar destaque')
     },
   })
 

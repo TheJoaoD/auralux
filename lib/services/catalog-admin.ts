@@ -94,11 +94,11 @@ export async function getAdminProductsList(params: ProductsListParams = {}) {
       id,
       name,
       category_id,
-      categories!category_id(name),
+      categories (name),
       sale_price,
       quantity,
       image_url,
-      catalog_items!left(visible, featured)
+      catalog_items (visible, featured)
     `, { count: 'exact' })
 
   // Search filter
@@ -126,16 +126,23 @@ export async function getAdminProductsList(params: ProductsListParams = {}) {
   }
 
   // Transform data to include catalog status
-  const products: AdminProduct[] = (data || []).map((product: any) => ({
-    id: product.id,
-    name: product.name,
-    category: product.categories?.name || null,
-    sale_price: product.sale_price,
-    quantity: product.quantity,
-    image_url: product.image_url,
-    catalog_visible: product.catalog_items?.[0]?.visible || false,
-    catalog_featured: product.catalog_items?.[0]?.featured || false,
-  }))
+  // catalog_items is an array (could be empty if no entry exists)
+  const products: AdminProduct[] = (data || []).map((product: any) => {
+    const catalogItem = Array.isArray(product.catalog_items)
+      ? product.catalog_items[0]
+      : product.catalog_items
+
+    return {
+      id: product.id,
+      name: product.name,
+      category: product.categories?.name || null,
+      sale_price: product.sale_price,
+      quantity: product.quantity,
+      image_url: product.image_url,
+      catalog_visible: catalogItem?.visible === true,
+      catalog_featured: catalogItem?.featured === true,
+    }
+  })
 
   return {
     products,

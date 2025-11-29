@@ -1,27 +1,25 @@
 /**
  * Product Details Page
- * Epic 2 - Story 2.4: Página de Detalhes do Produto
- *
- * Displays full product information with fragrance details, actions, and related products
+ * Premium mobile-first design
+ * Based on front-end-spec-catalogo.md
  */
 
 import { notFound } from 'next/navigation'
 import Image from 'next/image'
 import Link from 'next/link'
-import { ArrowLeft } from 'lucide-react'
+import { ArrowLeft, Share2, Package } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { getProductDetails } from '@/lib/services/catalog'
-import { ProductActions } from '@/components/catalog/ProductActions'
 import { FragranceDetails } from '@/components/catalog/FragranceDetails'
-import { RelatedProducts } from '@/components/catalog/RelatedProducts'
+import { ProductActionsClient, RelatedProductsClient } from '@/components/catalog/ProductPageClient'
 import { createBuildClient } from '@/lib/supabase/server'
+import { cn } from '@/lib/utils'
 
 // ISR configuration
 export const revalidate = 60
 
 // Generate static params for featured products (SSG)
-// Uses build-time safe client (no cookies)
 export async function generateStaticParams() {
   try {
     const supabase = createBuildClient()
@@ -86,76 +84,104 @@ export default async function ProductDetailsPage({
   const stockBadge = getStockBadge(product.quantity, product.stock_return_date)
 
   return (
-    <div className="min-h-screen bg-muted/30">
-      {/* Back Button */}
-      <div className="bg-white border-b">
-        <div className="container mx-auto px-4 py-3">
-          <Button variant="ghost" size="sm" asChild>
+    <div className="min-h-screen bg-background pb-24">
+      {/* Sticky Header */}
+      <div className="sticky top-0 z-40 bg-background/95 backdrop-blur-lg border-b border-border">
+        <div className="container mx-auto px-4 h-14 flex items-center justify-between">
+          <Button variant="ghost" size="icon" asChild className="h-10 w-10 -ml-2">
             <Link href="/catalogo/produtos">
-              <ArrowLeft className="mr-2 h-4 w-4" />
-              Voltar
+              <ArrowLeft className="h-5 w-5" />
+              <span className="sr-only">Voltar</span>
             </Link>
+          </Button>
+
+          <h1 className="text-sm font-medium truncate max-w-[200px] opacity-0 transition-opacity">
+            {product.name}
+          </h1>
+
+          <Button variant="ghost" size="icon" className="h-10 w-10 -mr-2">
+            <Share2 className="h-5 w-5" />
+            <span className="sr-only">Compartilhar</span>
           </Button>
         </div>
       </div>
 
-      <div className="container mx-auto px-4 py-8">
-        {/* Product Grid - 2 columns desktop */}
-        <div className="grid md:grid-cols-2 gap-8 mb-12">
-          {/* Left: Image */}
-          <div className="relative aspect-square bg-white rounded-lg overflow-hidden shadow-sm">
-            <Image
-              src={product.image_url || '/placeholder-product.jpg'}
-              alt={product.name}
-              fill
-              priority
-              className="object-cover"
-              sizes="(max-width: 768px) 100vw, 50vw"
-            />
-          </div>
+      {/* Hero Image */}
+      <div className="relative aspect-square bg-muted/30">
+        <Image
+          src={product.image_url || '/placeholder-product.jpg'}
+          alt={product.name}
+          fill
+          priority
+          className="object-cover"
+          sizes="100vw"
+        />
 
-          {/* Right: Details */}
-          <div className="space-y-6">
-            {/* Category */}
-            {product.category && (
-              <Link
-                href={`/catalogo/produtos?categoria=${product.category.id}`}
-                className="text-sm text-primary hover:text-primary/90 font-medium"
+        {/* Stock Badge Overlay */}
+        {stockBadge && stockBadge.variant === 'destructive' && (
+          <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
+            <Badge variant="destructive" className="text-base px-4 py-2">
+              {stockBadge.label}
+            </Badge>
+          </div>
+        )}
+      </div>
+
+      {/* Product Info */}
+      <div className="container mx-auto px-4 py-6 space-y-6">
+        {/* Category */}
+        {product.category && (
+          <Link
+            href={`/catalogo/produtos?categoria=${product.category.id}`}
+            className="inline-flex items-center gap-1.5 text-sm text-primary hover:text-primary/80 font-medium transition-colors"
+          >
+            <Package className="h-4 w-4" />
+            {product.category.name}
+          </Link>
+        )}
+
+        {/* Name */}
+        <h1 className="text-2xl md:text-3xl font-bold text-foreground leading-tight">
+          {product.name}
+        </h1>
+
+        {/* Price Section */}
+        <div className="space-y-2">
+          <div className="flex items-center gap-3">
+            <p className="text-3xl font-bold text-primary">
+              {formatPrice(product.sale_price)}
+            </p>
+            {stockBadge && stockBadge.variant !== 'destructive' && (
+              <Badge
+                variant={stockBadge.variant}
+                className={cn(
+                  stockBadge.variant === 'default' && 'bg-green-100 text-green-700 border-green-200'
+                )}
               >
-                {product.category.name}
-              </Link>
-            )}
-
-            {/* Name */}
-            <h1 className="text-3xl md:text-4xl font-bold text-foreground">
-              {product.name}
-            </h1>
-
-            {/* Price */}
-            <div className="flex items-center gap-4">
-              <p className="text-3xl font-bold text-primary">
-                {formatPrice(product.sale_price)}
-              </p>
-              {stockBadge && (
-                <Badge variant={stockBadge.variant}>{stockBadge.label}</Badge>
-              )}
-            </div>
-
-            {/* SKU */}
-            {product.sku && (
-              <p className="text-sm text-muted-foreground">SKU: {product.sku}</p>
-            )}
-
-            {/* Fragrance Details */}
-            {hasFragranceDetails(product) && (
-              <FragranceDetails product={product} />
+                {stockBadge.label}
+              </Badge>
             )}
           </div>
+
+          {/* Installments */}
+          <p className="text-sm text-muted-foreground">
+            ou 12x de {formatPrice(product.sale_price / 12)}
+          </p>
         </div>
+
+        {/* SKU */}
+        {product.sku && (
+          <p className="text-xs text-muted-foreground">
+            Ref: {product.sku}
+          </p>
+        )}
+
+        {/* Fragrance Details */}
+        <FragranceDetails product={product} />
 
         {/* Related Products */}
         {product.category_id && (
-          <RelatedProducts
+          <RelatedProductsClient
             categoryId={product.category_id}
             currentProductId={product.product_id}
           />
@@ -163,7 +189,7 @@ export default async function ProductDetailsPage({
       </div>
 
       {/* Sticky Action Buttons */}
-      <ProductActions product={product} />
+      <ProductActionsClient product={product} />
     </div>
   )
 }
@@ -174,27 +200,15 @@ function getStockBadge(
   stockReturnDate: string | null
 ): { label: string; variant: 'default' | 'secondary' | 'destructive' } | null {
   if (quantity > 0) {
-    return { label: 'Disponível', variant: 'default' }
+    return { label: 'Em estoque', variant: 'default' }
   }
 
   if (stockReturnDate) {
     const date = new Date(stockReturnDate).toLocaleDateString('pt-BR')
-    return { label: `Em breve (${date})`, variant: 'secondary' }
+    return { label: `Volta em ${date}`, variant: 'secondary' }
   }
 
   return { label: 'Indisponível', variant: 'destructive' }
-}
-
-// Helper: Check fragrance details
-function hasFragranceDetails(product: any): boolean {
-  return !!(
-    product.fragrance_notes_top ||
-    product.fragrance_notes_heart ||
-    product.fragrance_notes_base ||
-    product.occasion?.length ||
-    product.intensity ||
-    product.longevity
-  )
 }
 
 // Helper: Format price

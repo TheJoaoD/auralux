@@ -35,6 +35,7 @@ export interface SalesMetrics {
 export interface PaymentBreakdown {
   pix: { count: number; percentage: number; total: number }
   cash: { count: number; percentage: number; total: number }
+  card: { count: number; percentage: number; total: number }
   installment: { count: number; percentage: number; total: number }
 }
 
@@ -45,7 +46,7 @@ export interface DateRange {
 
 export interface SalesFilters {
   dateRange?: DateRange
-  paymentMethod?: 'pix' | 'cash' | 'installment'
+  paymentMethod?: 'pix' | 'cash' | 'card' | 'installment'
   customerId?: string
   status?: 'completed' | 'pending' | 'cancelled'
 }
@@ -215,10 +216,12 @@ export async function getPaymentMethodBreakdown(
     // Group by payment method
     const pixSales = sales?.filter((s) => s.payment_method === 'pix') || []
     const cashSales = sales?.filter((s) => s.payment_method === 'cash') || []
+    const cardSales = sales?.filter((s) => s.payment_method === 'card') || []
     const installmentSales = sales?.filter((s) => s.payment_method === 'installment') || []
 
     const pixTotal = pixSales.reduce((sum, s) => sum + s.total_amount, 0)
     const cashTotal = cashSales.reduce((sum, s) => sum + s.total_amount, 0)
+    const cardTotal = cardSales.reduce((sum, s) => sum + s.total_amount, 0)
     const installmentTotal = installmentSales.reduce((sum, s) => sum + s.total_amount, 0)
 
     return {
@@ -231,6 +234,11 @@ export async function getPaymentMethodBreakdown(
         count: cashSales.length,
         percentage: totalCount > 0 ? (cashSales.length / totalCount) * 100 : 0,
         total: cashTotal,
+      },
+      card: {
+        count: cardSales.length,
+        percentage: totalCount > 0 ? (cardSales.length / totalCount) * 100 : 0,
+        total: cardTotal,
       },
       installment: {
         count: installmentSales.length,
@@ -363,15 +371,19 @@ export interface CreateSaleInput {
     }
     quantity: number
   }>
-  payment_method: 'pix' | 'cash' | 'installment'
+  payment_method: 'pix' | 'cash' | 'card' | 'installment'
   installment_count?: number
   actual_amount_received?: number
+  down_payment?: number
+  down_payment_method?: 'pix' | 'cash' | 'card'
   notes?: string
 }
 
 /**
  * Creates a new sale with items
  * Includes transaction-like behavior with manual rollback
+ * Automatically creates installments for installment sales
+ * Automatically creates cash flow entries
  */
 export async function createSale(input: CreateSaleInput): Promise<Sale> {
   const supabase = createClient()
@@ -399,6 +411,13 @@ export async function createSale(input: CreateSaleInput): Promise<Sale> {
       0
     )
 
+    // Determine payment status based on payment method and down payment
+    const isInstallment = input.payment_method === 'installment'
+    const downPayment = input.down_payment || 0
+    const paymentStatus = isInstallment
+      ? (downPayment > 0 ? 'partial' : 'pending')
+      : 'paid'
+
     // Create sale record
     const saleData: Database['public']['Tables']['sales']['Insert'] = {
       user_id: user.id,
@@ -407,9 +426,11 @@ export async function createSale(input: CreateSaleInput): Promise<Sale> {
       payment_method: input.payment_method,
       installment_count: input.installment_count || null,
       actual_amount_received:
-        input.payment_method === 'installment'
+        isInstallment
           ? input.actual_amount_received || null
           : total_amount,
+      payment_status: paymentStatus,
+      down_payment: isInstallment ? downPayment : 0,
       status: 'completed',
       notes: input.notes || null,
     }
@@ -447,10 +468,62 @@ export async function createSale(input: CreateSaleInput): Promise<Sale> {
       throw new Error('Erro ao registrar itens da venda')
     }
 
+    // Import services for installment and cash flow handling
+    const { createInstallmentsForSale } = await import('./installmentService')
+    const { createCashFlowEntry } = await import('./cashFlowService')
+
+    try {
+      // Handle installment sales
+      if (isInstallment && input.installment_count && input.installment_count > 0) {
+        // Create installments
+        await createInstallmentsForSale(
+          sale.id,
+          total_amount,
+          downPayment,
+          input.installment_count,
+          new Date()
+        )
+
+        // If there's a down payment, create cash flow entry for it
+        if (downPayment > 0) {
+          const downPaymentMethodLabel = input.down_payment_method
+            ? input.down_payment_method.toUpperCase()
+            : 'N/A'
+          await createCashFlowEntry({
+            type: 'income',
+            category: 'sale_down_payment',
+            amount: downPayment,
+            description: `Entrada da venda parcelada via ${downPaymentMethodLabel}`,
+            referenceType: 'sale',
+            referenceId: sale.id
+          })
+        }
+      } else {
+        // Cash/PIX/Card sale - register total in cash flow
+        await createCashFlowEntry({
+          type: 'income',
+          category: 'sale_cash',
+          amount: total_amount,
+          description: `Venda à vista - ${input.payment_method.toUpperCase()}`,
+          referenceType: 'sale',
+          referenceId: sale.id
+        })
+      }
+    } catch (financialError) {
+      console.error('Error creating financial records:', financialError)
+
+      // Rollback: Delete sale items and sale
+      await supabase.from('sale_items').delete().eq('sale_id', sale.id)
+      await supabase.from('sales').delete().eq('id', sale.id)
+
+      throw new Error('Erro ao registrar dados financeiros da venda')
+    }
+
     // Database triggers will automatically:
     // - Update inventory quantities (update_inventory_on_sale)
     // - Update customer purchase metrics (update_customer_on_sale)
     // - Create inventory movements (create_inventory_movement_on_sale)
+    // - Update customer total_due (trigger_customer_due_on_installment_change)
 
     return sale
   } catch (error) {

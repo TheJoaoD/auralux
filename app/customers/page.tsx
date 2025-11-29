@@ -5,6 +5,7 @@ import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { MainLayout } from '@/components/layout/MainLayout'
 import { CustomerGallery } from '@/components/customers/CustomerGallery'
 import { AddCustomerModal } from '@/components/customers/AddCustomerModal'
+import { CustomerDetailModal } from '@/components/customers/customer-detail-modal'
 import { SimplePagination } from '@/components/ui/simple-pagination'
 import { getCustomers, searchCustomers } from '@/lib/services/customerService'
 import { createClient } from '@/lib/supabase/client'
@@ -15,6 +16,8 @@ import type { Customer } from '@/types'
 
 export default function CustomersPage() {
   const [isAddModalOpen, setIsAddModalOpen] = useState(false)
+  const [isDetailModalOpen, setIsDetailModalOpen] = useState(false)
+  const [selectedCustomer, setSelectedCustomer] = useState<Customer | null>(null)
   const [searchQuery, setSearchQuery] = useState('')
   const [currentPage, setCurrentPage] = useState(1)
   const pageSize = 5
@@ -68,8 +71,8 @@ export default function CustomersPage() {
   }, [user, supabase, queryClient])
 
   const handleCustomerClick = useCallback((customer: Customer) => {
-    // TODO: Navigate to customer detail page in future story
-    console.log('Customer clicked:', customer)
+    setSelectedCustomer(customer)
+    setIsDetailModalOpen(true)
   }, [])
 
   const handleClearSearch = () => {
@@ -168,6 +171,13 @@ export default function CustomersPage() {
         <AddCustomerModal
           open={isAddModalOpen}
           onOpenChange={setIsAddModalOpen}
+        />
+
+        {/* Customer Detail Modal */}
+        <CustomerDetailModal
+          customer={selectedCustomer}
+          open={isDetailModalOpen}
+          onOpenChange={setIsDetailModalOpen}
         />
       </div>
     </MainLayout>

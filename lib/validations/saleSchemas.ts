@@ -21,21 +21,35 @@ export const createSaleSchema = z
     }),
     installment_count: z.number().int().min(1).max(12).optional(),
     actual_amount_received: z.number().positive().optional(),
+    down_payment: z.number().nonnegative().optional(),
     notes: z.string().max(500).optional(),
   })
   .refine(
     (data) => {
       if (data.payment_method === 'installment') {
-        return (
-          data.installment_count !== undefined &&
-          data.actual_amount_received !== undefined
-        )
+        return data.installment_count !== undefined && data.installment_count > 0
       }
       return true
     },
     {
-      message: 'Parcelamento requer número de parcelas e valor recebido',
-      path: ['payment_method'],
+      message: 'Parcelamento requer número de parcelas',
+      path: ['installment_count'],
+    }
+  )
+  .refine(
+    (data) => {
+      if (data.payment_method === 'installment' && data.down_payment !== undefined) {
+        const total = data.cartItems.reduce(
+          (sum, item) => sum + item.quantity * item.product.sale_price,
+          0
+        )
+        return data.down_payment < total
+      }
+      return true
+    },
+    {
+      message: 'Entrada não pode ser igual ou maior que o total',
+      path: ['down_payment'],
     }
   )
   .refine(
