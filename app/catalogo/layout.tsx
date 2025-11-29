@@ -4,6 +4,7 @@
  */
 
 import { CatalogShell } from '@/components/catalog/CatalogShell'
+import { CatalogAuthProvider } from '@/lib/providers/catalog-auth-provider'
 
 export default function CatalogLayout({
   children,
@@ -11,8 +12,10 @@ export default function CatalogLayout({
   children: React.ReactNode
 }) {
   return (
-    <CatalogShell>
-      {children}
-    </CatalogShell>
+    <CatalogAuthProvider>
+      <CatalogShell>
+        {children}
+      </CatalogShell>
+    </CatalogAuthProvider>
   )
 }
