@@ -386,21 +386,28 @@ export async function getCategories() {
       id,
       name,
       color,
-      products!inner (
+      products (
         id,
-        catalog_items!inner (
+        catalog_items (
           visible
         )
       )
     `
     )
-    .eq('products.catalog_items.visible', true)
 
   if (error) {
     throw new Error(`Failed to fetch categories: ${error.message}`)
   }
 
-  return data
+  // Transform to include product_count (only visible catalog items)
+  return data.map((category) => ({
+    id: category.id,
+    name: category.name,
+    color: category.color,
+    product_count: category.products?.filter(
+      (p: any) => p.catalog_items?.some((ci: any) => ci.visible === true)
+    ).length || 0,
+  }))
 }
 
 /**
