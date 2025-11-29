@@ -39,26 +39,25 @@ export function AuthModal({ isOpen, onClose, onSuccess }: AuthModalProps) {
     }
   }, [isOpen])
 
-  // Validate WhatsApp format
+  // Validate WhatsApp format (DDD + 9 digits = 11 digits)
   useEffect(() => {
     const cleaned = whatsapp.replace(/\D/g, '')
-    setIsValid(cleaned.length >= 11 && cleaned.length <= 15)
+    setIsValid(cleaned.length === 11)
   }, [whatsapp])
 
-  // Format WhatsApp for display
+  // Format WhatsApp for display: (11) 99999-9999
   const formatWhatsApp = (value: string) => {
     const cleaned = value.replace(/\D/g, '')
 
-    if (cleaned.length <= 2) return `+${cleaned}`
-    if (cleaned.length <= 4) return `+${cleaned.slice(0, 2)} ${cleaned.slice(2)}`
-    if (cleaned.length <= 9) return `+${cleaned.slice(0, 2)} ${cleaned.slice(2, 4)} ${cleaned.slice(4)}`
-    return `+${cleaned.slice(0, 2)} ${cleaned.slice(2, 4)} ${cleaned.slice(4, 9)}-${cleaned.slice(9, 13)}`
+    if (cleaned.length <= 2) return `(${cleaned}`
+    if (cleaned.length <= 7) return `(${cleaned.slice(0, 2)}) ${cleaned.slice(2)}`
+    return `(${cleaned.slice(0, 2)}) ${cleaned.slice(2, 7)}-${cleaned.slice(7, 11)}`
   }
 
   const handleWhatsAppChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value
     const cleaned = value.replace(/\D/g, '')
-    if (cleaned.length <= 15) {
+    if (cleaned.length <= 11) {
       setWhatsapp(formatWhatsApp(cleaned))
       setError(null)
     }
@@ -70,7 +69,7 @@ export function AuthModal({ isOpen, onClose, onSuccess }: AuthModalProps) {
     setIsLoading(true)
 
     try {
-      const cleanedPhone = '+' + whatsapp.replace(/\D/g, '')
+      const cleanedPhone = '+55' + whatsapp.replace(/\D/g, '')
       const result = await authenticateWithWhatsApp(cleanedPhone)
 
       if (!result.success) {
@@ -97,7 +96,7 @@ export function AuthModal({ isOpen, onClose, onSuccess }: AuthModalProps) {
     setIsLoading(true)
 
     try {
-      const cleanedPhone = '+' + whatsapp.replace(/\D/g, '')
+      const cleanedPhone = '+55' + whatsapp.replace(/\D/g, '')
       const result = await completeRegistration(cleanedPhone, name)
 
       if (!result.success) {
@@ -157,7 +156,7 @@ export function AuthModal({ isOpen, onClose, onSuccess }: AuthModalProps) {
                     type="tel"
                     value={whatsapp}
                     onChange={handleWhatsAppChange}
-                    placeholder="+55 11 99999-9999"
+                    placeholder="(11) 99999-9999"
                     className={`w-full pl-10 pr-10 py-3 border rounded-xl text-lg font-medium text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 transition-all ${
                       error
                         ? 'border-red-300 focus:ring-red-200 bg-red-50'
