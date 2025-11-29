@@ -21,55 +21,24 @@ export function CatalogFooter() {
             </p>
           </div>
 
-          {/* Links - Institucional */}
+          {/* Links - Catálogo */}
           <div className="space-y-4">
-            <h4 className="font-semibold text-foreground">Institucional</h4>
+            <h4 className="font-semibold text-foreground">Catálogo</h4>
             <ul className="space-y-2 text-sm">
               <li>
                 <Link
-                  href="/catalogo/sobre"
+                  href="/catalogo"
                   className="text-muted-foreground hover:text-primary transition-colors"
                 >
-                  Sobre Nós
+                  Ver Produtos
                 </Link>
               </li>
               <li>
                 <Link
-                  href="/catalogo/contato"
+                  href="/catalogo/produtos"
                   className="text-muted-foreground hover:text-primary transition-colors"
                 >
-                  Contato
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/catalogo/politica-privacidade"
-                  className="text-muted-foreground hover:text-primary transition-colors"
-                >
-                  Política de Privacidade
-                </Link>
-              </li>
-            </ul>
-          </div>
-
-          {/* Links - Ajuda */}
-          <div className="space-y-4">
-            <h4 className="font-semibold text-foreground">Ajuda</h4>
-            <ul className="space-y-2 text-sm">
-              <li>
-                <Link
-                  href="/catalogo/como-comprar"
-                  className="text-muted-foreground hover:text-primary transition-colors"
-                >
-                  Como Comprar
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/catalogo/faq"
-                  className="text-muted-foreground hover:text-primary transition-colors"
-                >
-                  Perguntas Frequentes
+                  Todos os Produtos
                 </Link>
               </li>
               <li>
@@ -79,6 +48,31 @@ export function CatalogFooter() {
                 >
                   Solicitar Produto
                 </Link>
+              </li>
+            </ul>
+          </div>
+
+          {/* Links - Contato */}
+          <div className="space-y-4">
+            <h4 className="font-semibold text-foreground">Contato</h4>
+            <ul className="space-y-2 text-sm">
+              <li>
+                <a
+                  href="https://wa.me/5563984830308"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-muted-foreground hover:text-primary transition-colors"
+                >
+                  WhatsApp
+                </a>
+              </li>
+              <li>
+                <a
+                  href="mailto:contato@auralux.com"
+                  className="text-muted-foreground hover:text-primary transition-colors"
+                >
+                  E-mail
+                </a>
               </li>
             </ul>
           </div>
