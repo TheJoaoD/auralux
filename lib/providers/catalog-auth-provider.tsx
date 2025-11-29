@@ -10,8 +10,7 @@ import type { CatalogUser } from '@/types/catalog'
 import { getCurrentCatalogUser } from '@/app/catalogo/actions/auth'
 import { AuthModal } from '@/components/catalog/AuthModal'
 
-const FIRST_VISIT_KEY = 'catalog_first_visit_shown'
-const MODAL_DELAY_MS = 3000 // Show modal after 3 seconds on first visit
+const SESSION_MODAL_KEY = 'catalog_modal_shown_session'
 
 interface CatalogAuthContextType {
   user: CatalogUser | null
@@ -33,6 +32,7 @@ export function CatalogAuthProvider({
   const [user, setUser] = useState<CatalogUser | null>(null)
   const [isLoading, setIsLoading] = useState(true)
   const [isModalOpen, setIsModalOpen] = useState(false)
+  const [hasTriggered, setHasTriggered] = useState(false)
 
   const refreshUser = async () => {
     try {
@@ -48,32 +48,59 @@ export function CatalogAuthProvider({
     }
   }
 
-  // Check for first visit and show modal
+  // Trigger modal on any user interaction
+  const triggerModal = () => {
+    if (hasTriggered || user) return
+
+    // Check session storage (resets each browser session)
+    const shownThisSession = sessionStorage.getItem(SESSION_MODAL_KEY)
+    if (shownThisSession) return
+
+    setHasTriggered(true)
+    setIsModalOpen(true)
+    sessionStorage.setItem(SESSION_MODAL_KEY, 'true')
+  }
+
+  // Initial load
   useEffect(() => {
-    const checkFirstVisit = async () => {
-      const currentUser = await refreshUser()
+    refreshUser()
+  }, [])
 
-      // If user is already authenticated, don't show modal
-      if (currentUser) {
-        return
-      }
+  // Listen for any user interaction to show modal
+  useEffect(() => {
+    if (isLoading || user || hasTriggered) return
 
-      // Check if we've already shown the modal on first visit
-      const hasShownModal = localStorage.getItem(FIRST_VISIT_KEY)
+    const shownThisSession = sessionStorage.getItem(SESSION_MODAL_KEY)
+    if (shownThisSession) return
 
-      if (!hasShownModal) {
-        // Show modal after delay
-        const timer = setTimeout(() => {
-          setIsModalOpen(true)
-          localStorage.setItem(FIRST_VISIT_KEY, 'true')
-        }, MODAL_DELAY_MS)
+    // Interaction events that trigger the modal
+    const events = ['click', 'scroll', 'touchstart', 'mousemove']
 
-        return () => clearTimeout(timer)
-      }
+    const handleInteraction = () => {
+      triggerModal()
+      // Remove all listeners after triggering
+      events.forEach(event => {
+        document.removeEventListener(event, handleInteraction)
+      })
     }
 
-    checkFirstVisit()
-  }, [])
+    // Add listeners
+    events.forEach(event => {
+      document.addEventListener(event, handleInteraction, { once: true, passive: true })
+    })
+
+    // Also trigger after 2 seconds if no interaction
+    const timer = setTimeout(() => {
+      triggerModal()
+    }, 2000)
+
+    return () => {
+      clearTimeout(timer)
+      events.forEach(event => {
+        document.removeEventListener(event, handleInteraction)
+      })
+    }
+  }, [isLoading, user, hasTriggered])
 
   const handleAuthSuccess = async () => {
     await refreshUser()
