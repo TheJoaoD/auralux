@@ -128,16 +128,16 @@ export function AuthModal({ isOpen, onClose, onSuccess }: AuthModalProps) {
       <div className="fixed inset-x-0 bottom-0 md:inset-auto md:top-1/2 md:left-1/2 md:-translate-x-1/2 md:-translate-y-1/2 z-50">
         <div className="bg-white rounded-t-3xl md:rounded-2xl w-full md:w-[400px] max-h-[80vh] overflow-hidden shadow-xl">
           {/* Header */}
-          <div className="flex items-center justify-between p-4 border-b">
+          <div className="flex items-center justify-between p-4 border-b border-gray-100">
             <h2 className="text-lg font-semibold text-gray-900">
               {step === 'phone' ? 'Entre com seu WhatsApp' : 'Complete seu cadastro'}
             </h2>
             <button
               onClick={onClose}
-              className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+              className="p-1.5 hover:bg-gray-50 rounded-full transition-colors opacity-40 hover:opacity-70"
               aria-label="Fechar"
             >
-              <X className="h-5 w-5 text-gray-500" />
+              <X className="h-4 w-4 text-gray-400" />
             </button>
           </div>
 
@@ -151,25 +151,25 @@ export function AuthModal({ isOpen, onClose, onSuccess }: AuthModalProps) {
 
                 <div className="relative">
                   <div className="absolute left-3 top-1/2 -translate-y-1/2">
-                    <Phone className="h-5 w-5 text-gray-400" />
+                    <Phone className="h-5 w-5 text-gray-500" />
                   </div>
                   <input
                     type="tel"
                     value={whatsapp}
                     onChange={handleWhatsAppChange}
                     placeholder="+55 11 99999-9999"
-                    className={`w-full pl-10 pr-10 py-3 border rounded-xl text-lg focus:outline-none focus:ring-2 transition-all ${
+                    className={`w-full pl-10 pr-10 py-3 border rounded-xl text-lg font-medium text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 transition-all ${
                       error
-                        ? 'border-red-300 focus:ring-red-200'
+                        ? 'border-red-300 focus:ring-red-200 bg-red-50'
                         : isValid
-                        ? 'border-green-300 focus:ring-green-200'
-                        : 'border-gray-300 focus:ring-primary/20 focus:border-primary'
+                        ? 'border-green-400 focus:ring-green-200 bg-green-50'
+                        : 'border-gray-300 focus:ring-primary/20 focus:border-primary bg-gray-50'
                     }`}
                     autoFocus
                   />
                   {isValid && !error && (
                     <div className="absolute right-3 top-1/2 -translate-y-1/2">
-                      <Check className="h-5 w-5 text-green-500" />
+                      <Check className="h-5 w-5 text-green-600" />
                     </div>
                   )}
                 </div>
@@ -208,7 +208,7 @@ export function AuthModal({ isOpen, onClose, onSuccess }: AuthModalProps) {
 
                 <div className="relative">
                   <div className="absolute left-3 top-1/2 -translate-y-1/2">
-                    <User className="h-5 w-5 text-gray-400" />
+                    <User className="h-5 w-5 text-gray-500" />
                   </div>
                   <input
                     type="text"
@@ -218,10 +218,10 @@ export function AuthModal({ isOpen, onClose, onSuccess }: AuthModalProps) {
                       setError(null)
                     }}
                     placeholder="Seu nome"
-                    className={`w-full pl-10 pr-4 py-3 border rounded-xl text-lg focus:outline-none focus:ring-2 transition-all ${
+                    className={`w-full pl-10 pr-4 py-3 border rounded-xl text-lg font-medium text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 transition-all ${
                       error
-                        ? 'border-red-300 focus:ring-red-200'
-                        : 'border-gray-300 focus:ring-primary/20 focus:border-primary'
+                        ? 'border-red-300 focus:ring-red-200 bg-red-50'
+                        : 'border-gray-300 focus:ring-primary/20 focus:border-primary bg-gray-50'
                     }`}
                     autoFocus
                   />
