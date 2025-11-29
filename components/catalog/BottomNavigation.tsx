@@ -30,11 +30,19 @@ interface BottomNavigationProps {
 export function BottomNavigation({ onSearchClick }: BottomNavigationProps) {
   const pathname = usePathname()
 
+  // Hide on product detail pages (they have their own action buttons)
+  const isProductPage = pathname.startsWith('/catalogo/produto/')
+
   const isActive = (href: string) => {
     if (href === '/catalogo') {
       return pathname === '/catalogo'
     }
     return pathname.startsWith(href)
+  }
+
+  // Don't render on product detail pages
+  if (isProductPage) {
+    return null
   }
 
   const handleClick = (item: NavItem, e: React.MouseEvent) => {
