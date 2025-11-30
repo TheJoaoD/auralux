@@ -20,7 +20,6 @@ interface NavItem {
 const navItems: NavItem[] = [
   { id: 'home', icon: Home, label: 'Home', href: '/catalogo' },
   { id: 'products', icon: Grid3X3, label: 'Produtos', href: '/catalogo/produtos' },
-  { id: 'search', icon: Search, label: 'Buscar', href: '/catalogo/produtos' },
 ]
 
 interface BottomNavigationProps {
@@ -45,13 +44,6 @@ export function BottomNavigation({ onSearchClick }: BottomNavigationProps) {
     return null
   }
 
-  const handleClick = (item: NavItem, e: React.MouseEvent) => {
-    if (item.id === 'search' && onSearchClick) {
-      e.preventDefault()
-      onSearchClick()
-    }
-  }
-
   return (
     <nav
       className="fixed bottom-0 left-0 right-0 z-50 md:hidden glass border-t border-border/50"
@@ -66,7 +58,6 @@ export function BottomNavigation({ onSearchClick }: BottomNavigationProps) {
             <Link
               key={item.id}
               href={item.href}
-              onClick={(e) => handleClick(item, e)}
               className="outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 rounded-lg"
             >
               <div className="flex flex-col items-center justify-center touch-target relative">
@@ -90,6 +81,22 @@ export function BottomNavigation({ onSearchClick }: BottomNavigationProps) {
             </Link>
           )
         })}
+
+        {/* Search button - opens modal, not a link */}
+        <button
+          onClick={onSearchClick}
+          className="outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 rounded-lg"
+        >
+          <div className="flex flex-col items-center justify-center touch-target relative">
+            <Search
+              className="h-6 w-6 transition-colors duration-150 text-muted-foreground"
+              strokeWidth={2}
+            />
+            <span className="text-[10px] mt-1 font-medium transition-colors duration-150 text-muted-foreground">
+              Buscar
+            </span>
+          </div>
+        </button>
       </div>
     </nav>
   )

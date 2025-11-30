@@ -108,7 +108,7 @@ export function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
 
   const handleProductClick = (product: CatalogProduct) => {
     saveRecentSearch(product.name)
-    router.push(`/catalogo/produto/${product.id}`)
+    router.push(`/catalogo/produto/${product.product_id}`)
     onClose()
   }
 

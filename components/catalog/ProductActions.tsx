@@ -21,13 +21,27 @@ export function ProductActions({ product }: ProductActionsProps) {
   const isOutOfStock = product.quantity === 0
 
   const handleWhatsAppClick = () => {
-    const message = encodeURIComponent(
-      `Olá! Tenho interesse no produto:\n\n` +
-      `*${product.name}*\n` +
-      `Preço: R$ ${product.sale_price.toFixed(2)}\n` +
-      (product.sku ? `Ref: ${product.sku}\n` : '') +
-      `\nPoderia me dar mais informações?`
-    )
+    let message: string
+
+    if (isOutOfStock) {
+      // Mensagem para produto indisponível - demonstrar interesse
+      message = encodeURIComponent(
+        `Olá! Gostaria de demonstrar interesse no produto:\n\n` +
+        `*${product.name}*\n` +
+        (product.sku ? `Ref: ${product.sku}\n` : '') +
+        `\nEste produto está indisponível no momento. ` +
+        `Poderia me avisar quando voltar ao estoque? Tenho muito interesse!`
+      )
+    } else {
+      // Mensagem normal para produto disponível
+      message = encodeURIComponent(
+        `Olá! Tenho interesse no produto:\n\n` +
+        `*${product.name}*\n` +
+        `Preço: R$ ${product.sale_price.toFixed(2)}\n` +
+        (product.sku ? `Ref: ${product.sku}\n` : '') +
+        `\nPoderia me dar mais informações?`
+      )
+    }
 
     const whatsappUrl = `https://wa.me/${STORE_WHATSAPP.replace(/\D/g, '')}?text=${message}`
     window.open(whatsappUrl, '_blank')
@@ -76,14 +90,18 @@ export function ProductActions({ product }: ProductActionsProps) {
           <Button
             size="lg"
             onClick={handleWhatsAppClick}
-            disabled={isOutOfStock}
             className={cn(
               'flex-1 h-14 text-base font-semibold rounded-xl transition-all duration-200',
-              'bg-green-600 hover:bg-green-700 text-white'
+              isOutOfStock
+                ? 'bg-amber-500 hover:bg-amber-600 text-white'
+                : 'bg-green-600 hover:bg-green-700 text-white'
             )}
           >
             {isOutOfStock ? (
-              <span>Indisponível</span>
+              <span className="flex items-center gap-2">
+                <MessageCircle className="h-5 w-5" />
+                Demonstrar Interesse
+              </span>
             ) : (
               <span className="flex items-center gap-2">
                 <MessageCircle className="h-5 w-5" />
