@@ -163,9 +163,14 @@ export default async function ProductDetailsPage({
             )}
           </div>
 
-          {/* Installments */}
-          <p className="text-sm text-muted-foreground">
-            ou 12x de {formatPrice(product.sale_price / 12)}
+          {/* Payment Methods */}
+          <div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
+            <span className="bg-muted px-2 py-1 rounded">💳 Cartão</span>
+            <span className="bg-muted px-2 py-1 rounded">📱 PIX</span>
+            <span className="bg-muted px-2 py-1 rounded">💵 Dinheiro</span>
+          </div>
+          <p className="text-xs text-muted-foreground">
+            Parcelamos no cartão (taxas da maquininha)
           </p>
         </div>
 
